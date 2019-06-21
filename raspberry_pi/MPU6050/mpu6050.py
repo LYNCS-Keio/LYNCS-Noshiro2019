@@ -84,4 +84,6 @@ while 1:
     # 加速度
     accel_x,accel_y,accel_z = get_accel_data_lsb()
 
+    print
+
     sleep(1)
