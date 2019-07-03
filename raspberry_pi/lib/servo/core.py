@@ -1,6 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 
+__all__ = ['servo_pulse'];
+
 GPIO.setmode(GPIO.BCM)
 
 gp_out = 4
