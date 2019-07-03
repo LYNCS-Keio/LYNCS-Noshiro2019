@@ -6,3 +6,4 @@
 - pynmea2
 - smbus2
 - pyserial
+- RPI.GPIO

@@ -1,9 +1,7 @@
 language: python
 install:
-  - pip install opencv-python
-  - pip install smbus2
-  - pip install pyserial
-  - pip install pynmea2
+  - pip install pipenv
+  - pipenv install
 script:
   - cd raspberry_pi
   - python -m unittest discover -s tests -p "*_test.py"
