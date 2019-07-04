@@ -4,8 +4,8 @@
 import os
 import cv2
 import numpy as np
-import time
-import traceback
+
+__all__ = ['CamAnalysis']
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 class CamAnalysis:
@@ -46,12 +46,9 @@ class CamAnalysis:
 
 
 if __name__ == '__main__':
-    try:
-            stream = cv2.imread(current_dir + '/sample.png', 1)
-            cam = CamAnalysis()
-            cam.morphology_extract(stream)
-            coord = cam.contour_find()
-            cam.save_all_outputs()
-            print(coord)
-    except:
-        traceback.print_exc()
+        stream = cv2.imread(current_dir + '/sample.png', 1)
+        cam = CamAnalysis()
+        cam.morphology_extract(stream)
+        coord = cam.contour_find()
+        cam.save_all_outputs()
+        print(coord)

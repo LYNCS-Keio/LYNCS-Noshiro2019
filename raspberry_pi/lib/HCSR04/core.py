@@ -3,6 +3,8 @@
 import RPi.GPIO as GPIO
 import time
 
+__all__ = ['readData']
+
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
@@ -30,10 +32,11 @@ def readData():
     elif distance <= 20:
         distance = 20
     else:
-        distance = distance
+        pass
+        #distance = distance
     return distance
 
-if __name__ == '__main__'
+if __name__ == '__main__':
     while True:
         print(readData())
         time.sleep(0.2)

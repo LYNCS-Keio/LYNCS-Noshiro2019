@@ -3,6 +3,8 @@ import pynmea2
 import serial
 from math import radians, atan2, acos, sin, cos, tan
 
+__all__ = ['lat_long_reader', 'velocity_reader', 'lat_long_measurement', 'velocity_measurement', 'convert_lat_long_to_r_theta', 'r_theta_to_goal']
+
 def lat_long_reader(sentence):
     """
     sentenceから緯度経度を取得する。
@@ -12,14 +14,13 @@ def lat_long_reader(sentence):
     list : list of float or None
         緯度と経度のリスト。sentenceにこれらの情報が含まれていなかった場合はNoneとなる。
     """
-    try:
-        msg = pynmea2.parse(sentence)
-        if msg.latitude != None:
-            lat = float(msg.latitude)
-        if msg.longitude != None:
-            longi = float(msg.longitude)
-    except:
-        lat, longi = [None, None]
+    msg = pynmea2.parse(sentence)
+    lat = None
+    longi = None
+    if msg.latitude != None:
+        lat = float(msg.latitude)
+    if msg.longitude != None:
+        longi = float(msg.longitude)
     return [lat, longi]
 
 

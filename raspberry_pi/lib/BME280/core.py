@@ -1,6 +1,6 @@
 from smbus2 import SMBus
-import time
-import math
+
+__all__ = ['readData']
 
 sea_pressure = 1018
 max_high = 40
@@ -74,18 +74,17 @@ def readData():
         data.append(bus.read_byte_data(i2c_address, i))
     pres_raw = (data[0] << 12) | (data[1] << 4) | (data[2] >> 4)
     temp_raw = (data[3] << 12) | (data[4] << 4) | (data[5] >> 4)
-    hum_raw = (data[6] << 8) | data[7]
+    #hum_raw = (data[6] << 8) | data[7]
 
     recover_T = compensate_T(temp_raw)
     recover_P = compensate_P(pres_raw)
-    recover_H = compensate_H(hum_raw)
+    #recover_H = compensate_H(hum_raw)
     mesure_high = ((((sea_pressure/recover_P)**(1/5.257)) - 1.) * (recover_T + 273.15)) / 0.0065
     return mesure_high
 
 
 def compensate_P(adc_P):
     global t_fine
-    pressure = 0.0
 
     v1 = (t_fine / 2.0) - 64000.0
     v2 = (((v1 / 4.0) * (v1 / 4.0)) / 2048) * digP[5]
