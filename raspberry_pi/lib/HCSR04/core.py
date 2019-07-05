@@ -15,7 +15,7 @@ class HCSR04:
         GPIO.setup(HC_TRIG, GPIO.OUT)
         GPIO.setup(HC_ECHO, GPIO.IN)
 
-    def readData():
+    def readData(self):
         GPIO.output(HC_TRIG, True)
         time.sleep(0.000010)
         GPIO.output(HC_TRIG, False)
