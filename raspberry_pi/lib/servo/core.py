@@ -31,7 +31,7 @@ class servo:
         else:
             pass
 
-    def __del__():
+    def __del__(self):
         servo1.stop()
         servo2.stop()
         GPIO.cleanup()
