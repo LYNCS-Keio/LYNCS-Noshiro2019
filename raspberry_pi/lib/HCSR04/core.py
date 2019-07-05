@@ -3,14 +3,15 @@
 import RPi.GPIO as GPIO
 import time
 
+HC_TRIG = 2
+HC_ECHO = 3
+
 class HCSR04:
     def __init__(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
 
         SOUND_VELOCITY = 34000
-        HC_TRIG = 2
-        HC_ECHO = 3
 
         GPIO.setup(HC_TRIG, GPIO.OUT)
         GPIO.setup(HC_ECHO, GPIO.IN)
