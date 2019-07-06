@@ -7,6 +7,7 @@ rotation    backward - nuetral - forward
 """
 import RPi.GPIO as GPIO
 import time
+import sys
 
 __all__ = ['servo_pulse']
 
@@ -26,8 +27,9 @@ class servo:
         GPIO.cleanup(self.pin)
 
 if __name__ == "__main__":
+    args = sys.argv
     try:
-        sv = servo(12)
+        sv = servo(args[1])
         sv.rotate(5)
         time.sleep(1)
         sv.rotate(10)
