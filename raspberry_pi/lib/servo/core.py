@@ -1,6 +1,17 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 """
+-----Usage--------------
+Initialize:
+sv = servo(pin)
+
+Rotate:
+sv.rotate(dutycycle)
+
+Destruct:
+sv = None
+------------------------
+
 PWM signal: 50 Hz
 dutyCycle       5    -   7.5   -    10
 rotation    backward - nuetral - forward
