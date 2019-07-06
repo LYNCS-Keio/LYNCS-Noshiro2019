@@ -50,4 +50,4 @@ if __name__ == "__main__":
         HCS = HCSR04(args[1], args[2], 34300)
         print(HCS.readData())
     finally:
-        del HCS
+        HCS = None
