@@ -20,7 +20,7 @@ class servo:
         self.srv.start(7.5)
 
     def rotate(self, duty):
-        self.srv.changeDutyCycle(duty)
+        self.srv.ChangeDutyCycle(duty)
 
 
     def __del__(self):
