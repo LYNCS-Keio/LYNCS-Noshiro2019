@@ -4,11 +4,16 @@ import RPi.GPIO as GPIO
 import time
 import sys
 """
-initialize:
+-----Usage--------------
+Initialize:
 hcs = HCSR04(trig_pin, echo_pin, sound_velocity)
 
-read data:
+Read data:
 hcs.readData() -> distsnce /cm
+
+Destruct:
+hcs = None
+------------------------
 """
 
 class HCSR04:
@@ -52,7 +57,7 @@ if __name__ == "__main__":
     try:
         HCS = HCSR04(int(args[1]), int(args[2]), 34300)
     while True:
-		time.sleep(0.05)
+        time.sleep(0.05)
         print(HCS.readData())
     finally:
         HCS = None
