@@ -8,40 +8,29 @@ rotation    backward - nuetral - forward
 import RPi.GPIO as GPIO
 import time
 
-pin1 = 12
-pin2 = 18
-
 __all__ = ['servo_pulse']
 
 class servo:
-    def __init__(self):
+    def __init__(self, pin):
+        self.pin = pin
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(pin1, GPIO.OUT)
-        GPIO.setup(pin2, GPIO.OUT)
-        servo1 = GPIO.PWM(pin1, 50)
-        servo2 = GPIO.PWM(pin2, 50)
-        servo1.start(7.5)
-        servo2.start(7.5)
+        self.srv = GPIO.PWM(self.pin, 50)
+        self.srv.start(7.5)
 
-    def rotate(select,duty):
-        if select == 0:
-            servo1.changeDutyCycle(duty)
-        elif select == 1:
-            servo2.changeDutyCycle(duty)
-        else:
-            pass
+    def rotate(self, duty):
+        self.srv.changeDutyCycle(duty)
+
 
     def __del__(self):
-        servo1.stop()
-        servo2.stop()
-        GPIO.cleanup()
+        self.srv.stop()
+        GPIO.cleanup(self.pin)
 
 if __name__ == "__main__":
     try:
-        srv = servo()
-        srv.rotate(0, 5)
+        sv = servo(12)
+        sv.rotate(5)
         time.sleep(1)
-        srv.rotate(0, 10)
+        sv.rotate(10)
         time.sleep(1)
     finally:
-        del srv
+        sv = None
