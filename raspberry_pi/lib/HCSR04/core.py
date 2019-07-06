@@ -2,6 +2,7 @@
 # -*- coding:utf-8 -*-
 import RPi.GPIO as GPIO
 import time
+import sys
 """
 initialize:
 hcs = HCSR04(trig_pin, echo_pin, sound_velocity)
@@ -44,8 +45,9 @@ class HCSR04:
         GPIO.cleanup()
 
 if __name__ == "__main__":
+    args = sys.argv
     try:
-        HCS = HCSR04(2, 3, 34300)
+        HCS = HCSR04(args[1], args[2], 34300)
         print(HCS.readData())
     finally:
         del HCS
