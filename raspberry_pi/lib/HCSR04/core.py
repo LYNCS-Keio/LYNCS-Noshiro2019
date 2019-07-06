@@ -2,46 +2,50 @@
 # -*- coding:utf-8 -*-
 import RPi.GPIO as GPIO
 import time
+"""
+initialize:
+hcs = HCSR04(trig_pin, echo_pin, sound_velocity)
 
-HC_TRIG = 2
-HC_ECHO = 3
+read data:
+hcs.readData() -> distsnce /cm
+"""
 
 class HCSR04:
-    def __init__(self):
+    def __init__(self, tri, ech, vel):
+        self.trig = tri
+        self.echo = ech
+        self.sound_velocity = vel
+        
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
-
-        SOUND_VELOCITY = 34000
-
-        GPIO.setup(HC_TRIG, GPIO.OUT)
-        GPIO.setup(HC_ECHO, GPIO.IN)
+        GPIO.setup(self.trig, GPIO.OUT)
+        GPIO.setup(self.echo, GPIO.IN)
 
     def readData(self):
-        GPIO.output(HC_TRIG, True)
+        GPIO.output(self.trig, True)
         time.sleep(0.000010)
-        GPIO.output(HC_TRIG, False)
+        GPIO.output(self.trig, False)
 
-        while GPIO.input(HC_ECHO) == GPIO.LOW:
-            S_OFF = time.time()
-        while GPIO.input(HC_ECHO) == GPIO.HIGH:
-            S_ON = time.time()
+        while GPIO.input(self.echo) == GPIO.LOW:
+            self.time_1 = time.time()
+        while GPIO.input(self.echo) == GPIO.HIGH:
+            self.delta = time.time() - self.time_1
 
-        D_TIME = S_ON - S_OFF
-        distance = (D_TIME * SOUND_VELOCITY)/2
-        if distance >= 400:
-            distance = 400
-        elif distance <= 20:
-            distance = 20
+        self.distance = (self.delta * self.sound_velocity)/2
+        if self.distance >= 400:
+            self.distance = 400
+        elif self.distance <= 20:
+            self.distance = 20
         else:
-            distance = distance
-        return distance
+            pass
+        return self.distance
 
     def __del__(self):
         GPIO.cleanup()
 
 if __name__ == "__main__":
     try:
-        HCS = HCSR04()
+        HCS = HCSR04(2, 3, 34300)
         print(HCS.readData())
     finally:
         del HCS
