@@ -51,7 +51,7 @@ if __name__ == "__main__":
     args = sys.argv
     try:
         HCS = HCSR04(int(args[1]), int(args[2]), 34300)
-	while True:
+    while True:
 		time.sleep(0.05)
         print(HCS.readData())
     finally:
