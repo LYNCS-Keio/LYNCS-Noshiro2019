@@ -50,7 +50,7 @@ class HCSR04:
 if __name__ == "__main__":
     args = sys.argv
     try:
-        HCS = HCSR04(args[1], args[2], 34300)
+        HCS = HCSR04(int(args[1]), int(args[2]), 34300)
 	while True:
 		time.sleep(0.05)
         print(HCS.readData())
