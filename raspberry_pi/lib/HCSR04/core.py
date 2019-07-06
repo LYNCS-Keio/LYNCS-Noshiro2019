@@ -13,8 +13,8 @@ hcs.readData() -> distsnce /cm
 
 class HCSR04:
     def __init__(self, tri, ech, vel):
-        self.trig = 20
-        self.echo = 16
+        self.trig = tri
+        self.echo = ech
         self.sound_velocity = vel
         
         GPIO.setmode(GPIO.BCM)
