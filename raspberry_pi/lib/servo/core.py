@@ -15,6 +15,7 @@ class servo:
     def __init__(self, pin):
         self.pin = pin
         GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.pin, GPIO.OUT)
         self.srv = GPIO.PWM(self.pin, 50)
         self.srv.start(7.5)
 
