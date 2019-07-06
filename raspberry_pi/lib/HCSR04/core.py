@@ -5,14 +5,8 @@ import time
 import sys
 """
 -----Usage--------------
-Initialize:
-hcs = HCSR04(trig_pin, echo_pin, sound_velocity)
-
-Read data:
-hcs.readData() -> distsnce /cm
-
-Destruct:
-hcs = None
+with HCSR04 as hcs:
+    print(hcs.readData())
 ------------------------
 """
 
@@ -27,6 +21,9 @@ class HCSR04:
         GPIO.setup(self.trig, GPIO.OUT)
         GPIO.setup(self.echo, GPIO.IN)
 
+    def __enter__(self):
+        return self
+        
     def readData(self):
         GPIO.output(self.trig, True)
         time.sleep(0.000010)
@@ -48,16 +45,13 @@ class HCSR04:
         """
         return self.distance
 
-    def __del__(self):
+    def __exit__(self, exception_type, exception_value, traceback):
         GPIO.cleanup(self.trig)
         GPIO.cleanup(self.echo)
 
 if __name__ == "__main__":
     args = sys.argv
-    try:
-        HCS = HCSR04(int(args[1]), int(args[2]), 34300)
-    while True:
-        time.sleep(0.05)
-        print(HCS.readData())
-    finally:
-        HCS = None
+    with HCSR04(int(args[1]), int(args[2]), 34300) as hcs:
+        while True:
+            hcs.readData()
+            time.sleep(0.05)
