@@ -15,8 +15,6 @@ class HCSR04:
     def __init__(self, tri, ech, vel):
         self.trig = 20
         self.echo = 16
-	print(self.trig)
-	print(self.echo)
         self.sound_velocity = vel
         
         GPIO.setmode(GPIO.BCM)
@@ -35,18 +33,19 @@ class HCSR04:
             self.delta = time.time() - self.time_1
 
         self.distance = (self.delta * self.sound_velocity)/2
-	"""
+        """
         if self.distance >= 400:
             self.distance = 400
         elif self.distance <= 20:
             self.distance = 20
         else:
             pass
-	"""
+        """
         return self.distance
 
     def __del__(self):
-        GPIO.cleanup()
+        GPIO.cleanup(self.trig)
+        GPIO.cleanup(self.echo)
 
 if __name__ == "__main__":
     args = sys.argv
@@ -54,6 +53,6 @@ if __name__ == "__main__":
         HCS = HCSR04(args[1], args[2], 34300)
 	while True:
 		time.sleep(0.05)
-	        print(HCS.readData())
+        print(HCS.readData())
     finally:
         HCS = None
