@@ -14,7 +14,7 @@ import RPi.GPIO as GPIO
 import time
 import sys
 
-__all__ = ['servo_pulse']
+__all__ = ['servo']
 
 class servo:
     def __init__(self, pin):
