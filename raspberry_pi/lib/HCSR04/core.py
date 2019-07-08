@@ -10,6 +10,8 @@ with HCSR04 as hcs:
 ------------------------
 """
 
+__all__ = ['HCSR04']
+
 class HCSR04:
     def __init__(self, tri, ech, vel):
         self.trig = tri
