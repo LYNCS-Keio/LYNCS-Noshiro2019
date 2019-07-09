@@ -1,11 +1,14 @@
 from lib import BME280 as BME
 from lib import HCSR04 as HCSR
 from lib import MPU6050 as MPU
+from lib import servo as servo
 import time
-time_range=5 #加速度が落ち着いている判定判定時間
+time_range=5 #加速度が落ち着いている判定の判定時間
 break_time=30 #キャリア判定からの経過時間による着陸判定用
 extent=0.02 #MPUの誤差込みの判定にするための変数
 
+with servo(18) as sv: #パラ機構ロック
+    sv.rotate(8.5)
 #キャリア判定
 now_t = time()
 height = BME.readData()
@@ -16,7 +19,8 @@ while height>5: #meter
 while height>200:
     height = HCSR.readData()
 
-#パラ分離
+with servo(18) as sv: #パラ分離
+    sv.rotate(7.9)
 #着陸判定
 
 while time()-_time <= time_range :
