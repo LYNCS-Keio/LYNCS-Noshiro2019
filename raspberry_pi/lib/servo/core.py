@@ -38,4 +38,4 @@ if __name__ == "__main__":
     args = sys.argv
     with servo(int(args[1])) as sv:
         while True:
-            sv.rotate(int(args[2]))
+            sv.rotate(float(args[2]))
