@@ -37,7 +37,5 @@ class servo:
 if __name__ == "__main__":
     args = sys.argv
     with servo(int(args[1])) as sv:
-        sv.rotate(5)
-        time.sleep(1)
-        sv.rotate(10)
-        time.sleep(1)
+        while True:
+            sv.rotate(int(args[2]))
