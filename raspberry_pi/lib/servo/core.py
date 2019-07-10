@@ -30,9 +30,12 @@ class servo:
     def rotate(self, duty):
         self.srv.ChangeDutyCycle(duty)
 
-    def __exit__(self, exception_type, exception_value, traceback):
+    def __del__(self):
         self.srv.stop()
         GPIO.cleanup(self.pin)
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.__del__()
 
 if __name__ == "__main__":
     args = sys.argv
