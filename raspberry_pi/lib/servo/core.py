@@ -11,7 +11,6 @@ dutyCycle       5    -   7.5   -    10
 rotation    backward - nuetral - forward
 """
 import RPi.GPIO as GPIO
-import time
 import sys
 
 __all__ = ['servo']
@@ -35,7 +34,7 @@ class servo:
         GPIO.cleanup(self.pin)
 
     def __exit__(self, exception_type, exception_value, traceback):
-        self.__del__()
+        pass
 
 if __name__ == "__main__":
     args = sys.argv
