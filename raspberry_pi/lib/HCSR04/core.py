@@ -32,9 +32,9 @@ class HCSR04:
         time.sleep(0.000010)
         GPIO.output(self.trig, False)
 
-        GPIO.wait_for_edge(self.echo, GPIO.RISING, timeout=0.01)
+        GPIO.wait_for_edge(self.echo, GPIO.RISING, timeout=10)
         self.time_1 = time.time()
-        GPIO.wait_for_edge(self.echo, GPIO.FALLING, timeout=self.outrange)
+        GPIO.wait_for_edge(self.echo, GPIO.FALLING, timeout=15)
         self.delta = time.time() - self.time_1 + 0.0002
 
         self.distance = (self.delta * self.sound_velocity)/2
@@ -53,7 +53,8 @@ class HCSR04:
 
 if __name__ == "__main__":
     args = sys.argv
-    with HCSR04(int(args[1]), int(args[2]), 34300) as hcs:
+    print args[1]
+    with HCSR04(int(args[1]), int(args[2])) as hcs:
         while True:
-            hcs.readData()
+            hcs.readData(34300)
             time.sleep(0.06)
