@@ -10,6 +10,8 @@ with HCSR04(trigger, echo) as hcs:
 ------------------------
 """
 
+__all__ = ['HCSR04']
+
 class HCSR04:
     def __init__(self, tri, ech):
         self.trig = tri
@@ -42,7 +44,7 @@ class HCSR04:
 
 
     def __exit__(self, exception_type, exception_value, traceback):
-        self.__del__()
+        pass
 
 
     def __del__(self):
