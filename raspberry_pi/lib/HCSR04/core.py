@@ -56,5 +56,5 @@ if __name__ == "__main__":
     print args[1]
     with HCSR04(int(args[1]), int(args[2])) as hcs:
         while True:
-            hcs.readData(34300)
+            print(hcs.readData(34300))
             time.sleep(0.06)
