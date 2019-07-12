@@ -27,7 +27,7 @@ class HCSR04:
         
     def readData(self, vel):
         self.sound_velocity = vel
-        self.outrange = 400 / self.sound_velocity
+        #self.outrange = 400 / self.sound_velocity
         GPIO.output(self.trig, True)
         time.sleep(0.000010)
         GPIO.output(self.trig, False)
