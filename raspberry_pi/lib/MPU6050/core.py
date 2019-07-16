@@ -19,23 +19,24 @@ PWR_MGMT_1 = 0x6b	# PWR_MGMT_1
 PWR_MGMT_2 = 0x6c	# PWR_MGMT_2
 
 class MPU6050():
-    def __init__():
-        self.bus = smbus.SMbus(1)
-        self.bus.write_byte_data(DEV_ADDR, PWR_MGMT_1, 0)
+    def __init__(self):
+        self.bus = smbus.SMbus(1, device)
+        self.DEV_ADDR = device
+        self.bus.write_byte_data(self.DEV_ADDR, PWR_MGMT_1, 0)
 
     # 1byte read
-    def read_byte(adr):
-        return self.bus.read_byte_data(DEV_ADDR, adr)
+    def read_byte(seld,adr):
+        return self.bus.read_byte_data(self.DEV_ADDR, adr)
 
     # 2byte read
-    def read_word(adr):
-        self.high = self.bus.read_byte_data(DEV_ADDR, adr)
-        self.low = self.bus.read_byte_data(DEV_ADDR, adr+1)
+    def read_word(self,adr):
+        self.high = self.bus.read_byte_data(self.DEV_ADDR, adr)
+        self.low = self.bus.read_byte_data(self.DEV_ADDR, adr+1)
         self.val = (self.high << 8) + self.low
         return self.val
 
     # Sensor data read
-    def read_word_sensor(adr):
+    def read_word_sensor(self,adr):
         self.val = self.read_word(adr)
         if (self.val >= 0x8000):
         # minus
@@ -48,7 +49,7 @@ class MPU6050():
     # gyro
     #
     # get gyro data
-    def get_gyro_data_lsb():
+    def get_gyro_data_lsb(self):
         self.x = self.read_word_sensor(GYRO_XOUT)
         self.y = self.read_word_sensor(GYRO_YOUT)
         self.z = self.read_word_sensor(GYRO_ZOUT)
@@ -63,7 +64,7 @@ class MPU6050():
     # accel
     #
     # get accel data
-    def get_accel_data_lsb():
+    def get_accel_data_lsb(self):
         self.x = self.read_word_sensor(ACCEL_XOUT)
         self.y = self.read_word_sensor(ACCEL_YOUT)
         self.z = self.read_word_sensor(ACCEL_ZOUT)
@@ -81,7 +82,7 @@ class MPU6050():
     # phi : perpendicular - z_axis
     # 
 
-    def slope(x, y, z):   #radian
+    def slope(self, x, y, z):   #radian
         self.theta = math.atan(x / (y*y + z*z)**0.5)
         self.psi = math.atan(y / (x*x + z*z)**0.5)
         self.phi = math.atan((x*x + y*y)**0.5 / z)
