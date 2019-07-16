@@ -19,8 +19,8 @@ PWR_MGMT_1 = 0x6b	# PWR_MGMT_1
 PWR_MGMT_2 = 0x6c	# PWR_MGMT_2
 
 class MPU6050():
-    def __init__(self):
-        self.bus = smbus.SMbus(1, device)
+    def __init__(self,device):
+        self.bus = smbus.SMBus(1)
         self.DEV_ADDR = device
         self.bus.write_byte_data(self.DEV_ADDR, PWR_MGMT_1, 0)
 
