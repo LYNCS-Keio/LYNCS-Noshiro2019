@@ -2,7 +2,7 @@
 #!/usr/bin/python
 
 # import module
-import smself.bus		# use I2C
+import smbus		# use I2C
 import math		# mathmatics
 
 __all__ = ['get_gyro_data_lsb', 'get_accel_data_lsb', 'slope']
@@ -20,7 +20,7 @@ PWR_MGMT_2 = 0x6c	# PWR_MGMT_2
 
 class MPU6050():
     def __init__():
-        self.bus = smself.bus.SMself.bus(1)
+        self.bus = smbus.SMbus(1)
         self.bus.write_byte_data(DEV_ADDR, PWR_MGMT_1, 0)
 
     # 1byte read
