@@ -3,7 +3,8 @@
 
 # import module
 import smbus		# use I2C
-import math		# mathmatics
+import math  # mathmatics
+import time
 
 __all__ = ['get_gyro_data_lsb', 'get_accel_data_lsb', 'slope']
 
@@ -98,6 +99,6 @@ if __name__ == '__main__':
         accel_x, accel_y, accel_z = mpu.get_accel_data_lsb()
         slope_theta, slope_psi, slope_phi = mpu.slope(accel_x, accel_y, accel_z)
 
-        #print str(gyro_x) + ',' + str(gyro_y) + ',' + str(gyro_z) + ',' + str(accel_x) + ',' + str(accel_y) + ',' + str(accel_z) + ',' + 
-        print str(slope_theta) + ',' + str(slope_psi) + ',' + str(slope_phi)
+        print str(gyro_x) + ',' + str(gyro_y) + ',' + str(gyro_z) + ',' + str(accel_x) + ',' + str(accel_y) + ',' + str(accel_z) + ',' + 
+        #print str(slope_theta) + ',' + str(slope_psi) + ',' + str(slope_phi)
         time.sleep(0.1)
