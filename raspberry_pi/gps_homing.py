@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 
-from lib import rover_gps
+from lib import rover_gps as gps
 from lib import camera
 from lib import capture
 from lib import servo
@@ -9,7 +9,6 @@ from lib import MPU6050
 from lib import pid
 import time
 import threading
-import queue
 
 Kp, Ki, Kd = 0.1, 0.1, 0.1
 goal_pos = [0, 0]
@@ -45,12 +44,12 @@ class update_azimuth_with_gyro(threading.Thread):
 
 
 
-def update_azimuth_with_gps(pos1):
+def update_azimuth_with_gps():
     UAwG_thread = threading.Timer(5, update_azimuth_with_gps)
     UAwG_thread.start()
     t = time.time()
     try:
-        global r_theta_to_goal, azimuth_lock
+        global r_theta_to_goal, pos1, azimuth_lock
         pos2 = [None, None]
         while (pos2[0] is None) and (pos2[1] is None):
             if (time.time() - t) > timeout:
@@ -62,8 +61,6 @@ def update_azimuth_with_gps(pos1):
         azimuth_lock.release()
 
         pos1 = pos2
-    except:
-        pass
     finally:
         pass
 
@@ -74,7 +71,6 @@ def update_azimuth_with_gps(pos1):
 try:
     svL, svR = servo(pinL), servo(pinR)
     pid = pid(0.1, 0.1, 0.1)
-    gps = rover_gps()
     mpu = MPU6050(0x68)
     '''
     release detection
