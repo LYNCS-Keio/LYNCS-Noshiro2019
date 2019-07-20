@@ -45,7 +45,7 @@ while pre is None:
 with servo.servo(pinL) as svL, servo.servo(pinR) as svR:
     svL.rotate(dutyL)
     svR.rotate(dutyR)
-    MPU = MPU6050.MPU6050()
+    MPU = MPU6050.MPU6050(0x68)
 
     #goalとの距離が10m以下になったら画像での誘導
     while to_goal[0] > cam_dis:
