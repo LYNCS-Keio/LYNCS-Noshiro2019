@@ -5,6 +5,7 @@ import picamera
 import time
 import os
 import io
+import numpy
 import cv2
 
 __all__=['capture']
@@ -22,7 +23,7 @@ class capture:
         return self.stream
 
     def flush(self):
-        cv2.imwrite(current_dir + 'capture.png', self.stream)
+        cv2.imwrite(current_dir + 'capture.png', self.streams)
 
     def __del__(self):
         self.camera.stop_preview()
