@@ -13,8 +13,6 @@ rotation    backward - nuetral - forward
 import RPi.GPIO as GPIO
 import sys
 
-__all__ = ['servo']
-
 class servo:
     def __init__(self, pin):
         self.pin = pin
