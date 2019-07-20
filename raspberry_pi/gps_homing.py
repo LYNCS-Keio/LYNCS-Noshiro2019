@@ -29,7 +29,7 @@ Kd = 0.1
 #位置座標を保存
 #回転角度
 def cal_rotation_angle(preT,pre_gyro):
-    nowT = time.time()　#現在時刻
+    nowT = time.time() #現在時刻
     now_gyro = MPU.get_gyro_data_lsb()[2] #現在の角速度
 
     #積分して回転角度を求める
