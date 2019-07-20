@@ -42,7 +42,7 @@ pre = [None, None]
 while pre is None:
     pre = GPS.lat_long_measurement()
 
-with servo(pinL) as svL, servo(pinR) as svR:
+with servo.servo(pinL) as svL, servo.servo(pinR) as svR:
     svL.rotate(dutyL)
     svR.rotate(dutyR)
     MPU = MPU6050.MPU6050()
