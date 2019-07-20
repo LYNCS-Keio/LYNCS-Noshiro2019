@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -
 from lib import rover_gps as GPS
 from lib import servo
-from lib import MPU6050 as MPU
+from lib import MPU6050
 import math
 import time
 
@@ -44,6 +44,7 @@ while pre is None:
 with servo(pinL) as svL, servo(pinR) as svR:
     svL.rotate(dutyL)
     svR.rotate(dutyR)
+    MPU = MPU6050.MPU6050()
 
 #goalとの距離が10m以下になったら画像での誘導
 while to_goal[0] > cam_dis:
