@@ -10,7 +10,8 @@ cam_dis = 0.01
 
 dutyL = 9.0
 dutyR = 9.0
-
+pinL = 13
+pinR = 18
 #PID
 M = 0.00
 M1 =  0.00
