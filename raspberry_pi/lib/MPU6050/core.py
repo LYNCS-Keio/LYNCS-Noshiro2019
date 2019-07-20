@@ -5,8 +5,6 @@
 import smbus		# use I2C
 import math		# mathmatics
 
-__all__ = ['get_gyro_data_lsb', 'get_accel_data_lsb', 'slope']
-
 # register address
 ACCEL_XOUT = 0x3b	#
 ACCEL_YOUT = 0x3d
