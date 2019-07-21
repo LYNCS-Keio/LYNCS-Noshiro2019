@@ -6,7 +6,7 @@ import smbus		# use I2C
 import math  # mathmatics
 import time
 
-__all__ = ['get_gyro_data_lsb', 'get_accel_data_lsb', 'slope']
+__all__ = ['MPU6050']
 
 # register address
 ACCEL_XOUT = 0x3b	#
@@ -26,7 +26,7 @@ class MPU6050():
         self.bus.write_byte_data(self.DEV_ADDR, PWR_MGMT_1, 0)
 
     # 1byte read
-    def read_byte(seld,adr):
+    def read_byte(self,adr):
         return self.bus.read_byte_data(self.DEV_ADDR, adr)
 
     # 2byte read
