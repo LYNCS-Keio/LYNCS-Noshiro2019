@@ -5,7 +5,6 @@ import picamera
 import time
 import os
 import io
-import numpy
 import cv2
 
 __all__=['capture']
