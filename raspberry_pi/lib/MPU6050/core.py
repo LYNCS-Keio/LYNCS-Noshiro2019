@@ -3,7 +3,10 @@
 
 # import module
 import smbus		# use I2C
-import math		# mathmatics
+import math  # mathmatics
+import time
+
+__all__ = ['MPU6050']
 
 # register address
 ACCEL_XOUT = 0x3b	#
@@ -23,7 +26,7 @@ class MPU6050():
         self.bus.write_byte_data(self.DEV_ADDR, PWR_MGMT_1, 0)
 
     # 1byte read
-    def read_byte(seld,adr):
+    def read_byte(self,adr):
         return self.bus.read_byte_data(self.DEV_ADDR, adr)
 
     # 2byte read
@@ -78,9 +81,9 @@ class MPU6050():
     # theta : horizon - x_axis
     # psi : horizon - y_axis
     # phi : perpendicular - z_axis
-    #
+    # 
 
-    def slope(self, x, y, z):   #radian
+    def slope_accel(self, x, y, z):   #radian
         self.theta = math.atan(x / (y*y + z*z)**0.5)
         self.psi = math.atan(y / (x*x + z*z)**0.5)
         self.phi = math.atan((x*x + y*y)**0.5 / z)

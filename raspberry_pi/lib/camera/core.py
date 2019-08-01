@@ -27,7 +27,7 @@ class CamAnalysis:
     def contour_find(self):
         contours = cv2.findContours(self.mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[0]
         if len(contours) == 0:
-            print("-1")
+            return [-1,-1]
         else:
             areas = list(map(lambda contour: cv2.contourArea(contour), contours))
             max_area_index = areas.index(max(areas))
