@@ -41,6 +41,8 @@ Kd = 0.1
 goal_lat = 35.555437
 goal_long = 139.655772
 
+correction = 0.825 #MPU補正値
+
 #位置座標を保存
 #回転角度
 def cal_rotation_angle(preT,p_g):
@@ -48,7 +50,7 @@ def cal_rotation_angle(preT,p_g):
     now_gyro = MPU.get_gyro_data_lsb()[2] #現在の角速度
 
     #積分して回転角度を求める
-    now_rotation_angle = (now_gyro + p_g) * (nowT - preT) / 2
+    now_rotation_angle = (now_gyro + p_g) * (nowT - preT) / 2 - correction
     return [nowT, now_gyro, now_rotation_angle]
 
 #着地

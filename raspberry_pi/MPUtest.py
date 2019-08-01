@@ -3,8 +3,8 @@ import time
 rotation_angle = 0
 def cal_rotation_angle(preT,p_g):
     nowT = time.time()
-    now_gyro = MPU.get_gyro_data_lsb()[2]
-    now_rotation_angle = (now_gyro + p_g) * (nowT - preT) / 2 - 0.41
+    now_gyro = MPU.get_gyro_data_lsb()[2] - 0.825
+    now_rotation_angle = (now_gyro + p_g) * (nowT - preT) / 2
     print("変化率:",now_rotation_angle/(nowT - preT))
     return [nowT, now_gyro, now_rotation_angle]
 
