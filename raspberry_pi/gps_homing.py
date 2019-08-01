@@ -47,10 +47,10 @@ correction = 0.825 #MPU補正値
 #回転角度
 def cal_rotation_angle(preT,p_g):
     nowT = time.time() #現在時刻
-    now_gyro = MPU.get_gyro_data_lsb()[2] #現在の角速度
+    now_gyro = MPU.get_gyro_data_lsb()[2]  - correction#現在の角速度
 
     #積分して回転角度を求める
-    now_rotation_angle = (now_gyro + p_g) * (nowT - preT) / 2 - correction
+    now_rotation_angle = (now_gyro + p_g) * (nowT - preT) / 2
     return [nowT, now_gyro, now_rotation_angle]
 
 #着地
