@@ -17,7 +17,7 @@ for count in range(3):
 cam_dis = 0.01
 
 dutyL = 9.0
-dutyR = 9.0
+dutyR = 5.2
 pinL = 13
 pinR = 18
 #PID
@@ -94,7 +94,7 @@ with servo.servo(pinL) as svL, servo.servo(pinR) as svR:
             M = -1
 
         dutyL = 7.5 + 2.5*((zenshin + M) / 2)
-        dutyR = 7.5 + 2.5*((zenshin - M) / 2)
+        dutyR = 7.5 - 2.5*((zenshin - M) / 2)
 
         svL.rotate(dutyL)
         svR.rotate(dutyR)
