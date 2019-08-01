@@ -43,12 +43,12 @@ goal_long = 139.655772
 
 #位置座標を保存
 #回転角度
-def cal_rotation_angle(preT,pre_gyro):
+def cal_rotation_angle(preT,p_g):
     nowT = time.time() #現在時刻
     now_gyro = MPU.get_gyro_data_lsb()[2] #現在の角速度
 
     #積分して回転角度を求める
-    now_rotation_angle = (now_gyro + pre_gyro) * (nowT - preT) / 2
+    now_rotation_angle = (now_gyro + p_g) * (nowT - preT) / 2
     return [nowT, now_gyro, now_rotation_angle]
 
 #着地
@@ -61,6 +61,7 @@ try:
         svL.rotate(dutyL)
         svR.rotate(dutyR)
         MPU = MPU6050.MPU6050(0x68)
+        time.sleep(4)
         to_goal , rotation_angle = [1,0] , 0
         flag = 0
         #goalとの距離が10m以下になったら画像での誘導
@@ -68,9 +69,10 @@ try:
             now = [None, None]
             now = GPS.lat_long_measurement()
             if now[0] != None and now[1] != None:
-                convert_now = GPS.convert_lat_long_to_r_theta(pre[0],pre[1],now[0],now[1])
-                rotation_angle = convert_now[1]
-                to_goal =  GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)
+                to_goal[0] =  GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
+                if flag == 0:
+                    to_goal[1] =  GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1]
+                    rotation_angle = GPS.convert_lat_long_to_r_theta(pre[0],pre[1],now[0],now[1])[1]
                 pre = now
                 flag = 1
                 if to_goal[0] < cam_dis:
@@ -78,7 +80,7 @@ try:
                     svL.rotate(7.5)
                     break
 
-            elif flag == 1:
+            if flag == 1:
                 pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2]) #degree to radian
                 preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
                 rotation_angle += now_rotation_angle
