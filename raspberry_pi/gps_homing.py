@@ -61,7 +61,7 @@ try:
         svL.rotate(dutyL)
         svR.rotate(dutyR)
         MPU = MPU6050.MPU6050(0x68)
-        time.sleep(4)
+        time.sleep(10)
         to_goal , rotation_angle = [1,0] , 0
         flag = 0
         #goalとの距離が10m以下になったら画像での誘導
@@ -108,6 +108,7 @@ try:
 
             svL.rotate(dutyL)
             svR.rotate(dutyR)
+            print(M,rotation_angle)
 finally:
     GPIO.cleanup()
     svL = None
