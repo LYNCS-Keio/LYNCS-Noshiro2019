@@ -87,7 +87,7 @@ try:
             e2 = e1
             e1 = e
             e = to_goal[1] - rotation_angle
-            M += Kp * (e-e1) + Ki * e + Kd * ((e-e1) - (e1-e2))
+            M = Kp * (e-e1) + Ki * e + Kd * ((e-e1) - (e1-e2))
 
             if e < math.pi/2 and e > -math.pi/2:
                 zenshin = 1
