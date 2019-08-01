@@ -33,9 +33,9 @@ e = 0.00
 e_prev = 0.00
 integral = 0.0
 dt = 0.01
-Kp = 4.8
-Ki = 23.65
-Kd = 0.2436
+Kp = 0.1
+Ki = 0.1
+Kd = 0.1
 
 #goalの座標
 goal_lat = 35.555437
@@ -85,10 +85,13 @@ try:
                 pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2]) #degree to radian
                 preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
                 rotation_angle += now_rotation_angle
-                if rotation_angle > math.pi:
-                    rotation_angle -= 2*math.pi
-                if rotation_angle < -math.pi:
-                    rotation_angle += 2*math.pi
+                while 1:
+                    if rotation_angle > math.pi:
+                        rotation_angle -= 2*math.pi
+                    elif rotation_angle < -math.pi:
+                        rotation_angle += 2*math.pi
+                    else:
+                        break
 
             #dutyLを変える
             e = to_goal[1] - rotation_angle
