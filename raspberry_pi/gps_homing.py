@@ -78,16 +78,15 @@ try:
                     break
 
             elif flag == 1:
-                #回転
                 pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2]) #degree to radian
                 preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
                 rotation_angle += now_rotation_angle
 
             #dutyLを変える
-            e2 = e1
-            e1 = e
             e = to_goal[1] - rotation_angle
-            M = Kp * (e-e1) + Ki * e + Kd * ((e-e1) - (e1-e2))
+            integral += e * dt
+            M = Kp * e + Ki * integral + Kd * (e - e_prev) / dt
+            e_prev = e
 
             zenshin = 1
 
