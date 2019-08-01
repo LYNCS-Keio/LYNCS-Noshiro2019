@@ -3,13 +3,11 @@
 
 # import module
 import smbus		# use I2C
-import math		# mathmatics
+import math  # mathmatics
+import time
 
-__all__ = ['get_gyro_data_lsb', 'get_accel_data_lsb', 'slope']
+__all__ = ['MPU6050']
 
-
-# slave address
-DEV_ADDR = 0x68		# device address
 # register address
 ACCEL_XOUT = 0x3b	#
 ACCEL_YOUT = 0x3d
@@ -21,86 +19,85 @@ GYRO_ZOUT = 0x47
 PWR_MGMT_1 = 0x6b	# PWR_MGMT_1
 PWR_MGMT_2 = 0x6c	# PWR_MGMT_2
 
-bus = smbus.SMBus(1)
-bus.write_byte_data(DEV_ADDR, PWR_MGMT_1, 0)
+class MPU6050():
+    def __init__(self,device):
+        self.bus = smbus.SMBus(1)
+        self.DEV_ADDR = device
+        self.bus.write_byte_data(self.DEV_ADDR, PWR_MGMT_1, 0)
 
-# 1byte read
-def read_byte(adr):
-    return bus.read_byte_data(DEV_ADDR, adr)
-# 2byte read
-def read_word(adr):
-    high = bus.read_byte_data(DEV_ADDR, adr)
-    low = bus.read_byte_data(DEV_ADDR, adr+1)
-    val = (high << 8) + low
-    return val
-# Sensor data read
-def read_word_sensor(adr):
-    val = read_word(adr)
-    if (val >= 0x8000):
-    # minus
-        return -((65535 - val) + 1)
-    else:
-    # plus
-        return val
+    # 1byte read
+    def read_byte(self,adr):
+        return self.bus.read_byte_data(self.DEV_ADDR, adr)
 
-#
-# 角速度
-#
-# get gyro data
-def get_gyro_data_lsb():
-    x = read_word_sensor(GYRO_XOUT)
-    y = read_word_sensor(GYRO_YOUT)
-    z = read_word_sensor(GYRO_ZOUT)
-    # 角速度表示
-    x /= 131.0
-    y /= 131.0
-    z /= 131.0
+    # 2byte read
+    def read_word(self,adr):
+        self.high = self.bus.read_byte_data(self.DEV_ADDR, adr)
+        self.low = self.bus.read_byte_data(self.DEV_ADDR, adr+1)
+        self.val = (self.high << 8) + self.low
+        return self.val
 
-    return [x, y, z]
+    # Sensor data read
+    def read_word_sensor(self,adr):
+        self.val = self.read_word(adr)
+        if (self.val >= 0x8000):
+        # minus
+            return -((65535 - self.val) + 1)
+        else:
+        # plus
+            return self.val
 
-#
-# 加速度
-#
-# get accel data
-def get_accel_data_lsb():
-    x = read_word_sensor(ACCEL_XOUT)
-    y = read_word_sensor(ACCEL_YOUT)
-    z = read_word_sensor(ACCEL_ZOUT)
-    # 加速度表示
-    x /= 16384.0
-    y /= 16384.0
-    z /= 16384.0
+    #
+    # gyro
+    #
+    # get gyro data
+    def get_gyro_data_lsb(self):
+        self.x = self.read_word_sensor(GYRO_XOUT)
+        self.y = self.read_word_sensor(GYRO_YOUT)
+        self.z = self.read_word_sensor(GYRO_ZOUT)
+        # show gyro
+        self.x /= 131.0
+        self.y /= 131.0
+        self.z /= 131.0
 
-    return [x, y, z]
+        return [self.x, self.y, self.z]
 
-#
-# 傾き
-# θ = 水平線とx軸との角度
-# ψ = 水平線とy軸との角度
-# φ = 重力ベクトルとz軸との角度
-# 
+    #
+    # accel
+    #
+    # get accel data
+    def get_accel_data_lsb(self):
+        self.x = self.read_word_sensor(ACCEL_XOUT)
+        self.y = self.read_word_sensor(ACCEL_YOUT)
+        self.z = self.read_word_sensor(ACCEL_ZOUT)
+        # show accel
+        self.x /= 16384.0
+        self.y /= 16384.0
+        self.z /= 16384.0
 
-def slope(x, y, z):   #radian
-    theta = math.atan(x / (y*y + z*z)**0.5)
-    psi = math.atan(y / (x*x + z*z)**0.5)
-    phi = math.atan((x*x + y*y)**0.5 / z)
+        return [self.x, self.y, self.z]
 
-    return [theta, psi, phi]
+    #
+    # slope
+    # theta : horizon - x_axis
+    # psi : horizon - y_axis
+    # phi : perpendicular - z_axis
+    # 
+
+    def slope_accel(self, x, y, z):   #radian
+        self.theta = math.atan(x / (y*y + z*z)**0.5)
+        self.psi = math.atan(y / (x*x + z*z)**0.5)
+        self.phi = math.atan((x*x + y*y)**0.5 / z)
+
+        return [self.theta, self.psi, self.phi]
+
+
 
 if __name__ == '__main__':
-    while 1:
-        gyro_x, gyro_y, gyro_z = get_gyro_data_lsb()
-        accel_x, accel_y, accel_z = get_accel_data_lsb()
-        slope_theta, slope_psi, slope_phi = slope(accel_x, accel_y, accel_z)
+    while True:
+        mpu = MPU6050(0x68)
+        gyro_x, gyro_y, gyro_z = mpu.get_gyro_data_lsb()
+        accel_x, accel_y, accel_z = mpu.get_accel_data_lsb()
+        slope_theta, slope_psi, slope_phi = mpu.slope_accel(accel_x, accel_y, accel_z)
 
-        print'gyro_x=%8.3f' % gyro_x     
-        print'gyro_y=%8.3f' % gyro_y     
-        print'gyro_z=%8.3f' % gyro_z
-
-        print'accel_x=%6.3f' % accel_x     
-        print'accel_y=%6.3f' % accel_y     
-        print'accel_z=%6.3f' % accel_z
-
-        print'θ=%6.3f' % slope_theta
-        print'ψ=%6.3f' % slope_psi
-        print'φ=%6.3f' % slope_phi
+        print accel_z
+        time.sleep(0.1)
