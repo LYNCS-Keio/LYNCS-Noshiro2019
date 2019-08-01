@@ -73,7 +73,7 @@ with servo.servo(pinL) as svL, servo.servo(pinR) as svR:
         e = to_goal[1] - rotation_angle
         M += Kp * (e-e1) + Ki * e + Kd * ((e-e1) - (e1-e2))
 
-        if difference < math.pi/2 and difference > -math.pi/2:
+        if e < math.pi/2 and e > -math.pi/2:
             zenshin = 1
         else:
             zenshin = 0
