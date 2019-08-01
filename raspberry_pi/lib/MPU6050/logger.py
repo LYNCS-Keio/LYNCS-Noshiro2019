@@ -22,3 +22,4 @@ with open(current_dir + '/' + filename + '.log', 'w') as c:
         row.extend(gyro)
         row.extend(accel)
         f.writerow(row)
+        time.sleep(0.01)
