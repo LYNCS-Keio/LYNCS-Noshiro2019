@@ -6,12 +6,16 @@ import RPi.GPIO as GPIO
 import math
 import time
 
-pinDMUX=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
+DMUX_pin=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
 DMUX_out=[1,0,0] #出力ピン指定のHIGH,LOWデータ
 GPIO.setmode(GPIO.BCM)
-for count in range(3):
-    GPIO.setup(pinDMUX[count],GPIO.OUT)
-    GPIO.output(pinDMUX[count],DMUX_out[count]) #分離サーボの出力指定
+GPIO.setup(DMUX_pin[0], GPIO.OUT)
+GPIO.setup(DMUX_pin[1], GPIO.OUT)
+GPIO.setup(DMUX_pin[2], GPIO.OUT)
+
+GPIO.output(DMUX_pin[0], DMUX_out[0])
+GPIO.output(DMUX_pin[1], DMUX_out[1])
+GPIO.output(DMUX_pin[2], DMUX_out[2])
 
 #画像誘導に切り替える距離(km)
 cam_dis = 0.01
