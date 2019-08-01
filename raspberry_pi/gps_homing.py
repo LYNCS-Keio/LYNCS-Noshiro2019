@@ -2,12 +2,12 @@
 from lib import rover_gps as GPS
 from lib import servo
 from lib import MPU6050
+import RPi.GPIO as GPIO
 import math
 import time
 
 pinDMUX=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
 DMUX_out=[1,0,0] #出力ピン指定のHIGH,LOWデータ
-trigger,echo=19,26
 GPIO.setmode(GPIO.BCM)
 for count in range(3):
     GPIO.setup(pinDMUX[count],GPIO.OUT)
@@ -78,8 +78,8 @@ with servo.servo(pinL) as svL, servo.servo(pinR) as svR:
             rotation_angle += now_rotation_angle
 
         #dutyLを変える
-        e1 = e
         e2 = e1
+        e1 = e
         e = to_goal[1] - rotation_angle
         M += Kp * (e-e1) + Ki * e + Kd * ((e-e1) - (e1-e2))
 
