@@ -71,7 +71,7 @@ try:
                 rotation_angle = convert_now[1]
                 to_goal =  GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)
                 pre = now
-                flag = 1
+                #flag = 1
                 if to_goal[0] < cam_dis:
                     svR.rotate(7.5)
                     svL.rotate(7.5)
