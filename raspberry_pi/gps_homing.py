@@ -67,7 +67,7 @@ try:
             now = [None, None]
             now = GPS.lat_long_measurement()
             if now[0] != None and now[1] != None:
-                convert_now = GPS.convert_lat_long_to_r_theta(pre[0],pre[1],now[1],now[2])
+                convert_now = GPS.convert_lat_long_to_r_theta(pre[0],pre[1],now[0],now[1])
                 rotation_angle = convert_now[1]
                 to_goal =  GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)
                 pre = now
@@ -106,3 +106,5 @@ try:
             svR.rotate(dutyR)
 finally:
     GPIO.cleanup()
+    svL = None
+    svR = None
