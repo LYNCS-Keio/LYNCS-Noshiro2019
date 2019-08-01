@@ -5,7 +5,7 @@ import picamera
 import time
 import os
 import io
-import numpy
+import numpy as np
 import cv2
 
 __all__=['capture']
@@ -19,10 +19,10 @@ class capture:
         self.stream = io.BytesIO()
     
     def cap(self):
-        self.camera.capture(self.stream, 'bgr')
-        self.stream = numpy.frombuffer(self.stream, dtype=numpy.uint8).\
-            reshape((320, 240, 4))
-        return self.stream
+        self.camera.capture(self.stream, 'jpeg')
+        data = np.fromstring(self.stream.getvalue(), dtype=np.uint8)
+        image = cv2.imdecode(data, 1)
+        return image
 
     def flush(self):
         cv2.imwrite(current_dir + 'capture.png', self.stream)
