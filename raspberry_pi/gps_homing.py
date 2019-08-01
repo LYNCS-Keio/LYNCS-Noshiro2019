@@ -26,6 +26,7 @@ dutyR = 5.2
 pinL = 13
 pinR = 18
 #PID
+"""
 M = 0.00
 M1 =  0.00
 goal = 0.00
@@ -36,6 +37,7 @@ dt = 0.01
 Kp = 0.09
 Ki = 2
 Kd = 0.004
+"""
 
 #goalの座標
 goal_lat = 35.555437
@@ -85,17 +87,25 @@ try:
                     break
 
             if flag == 1:
-                preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
-                rotation_angle += now_rotation_angle
+                svR.rotate(9)
+                svL.rotate(9)
                 while 1:
-                    if rotation_angle > math.pi:
-                        rotation_angle -= 2*math.pi
-                    elif rotation_angle < -math.pi:
-                        rotation_angle += 2*math.pi
-                    else:
+                    preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
+                    rotation_angle += now_rotation_angle
+                    while 1:
+                        if rotation_angle > math.pi:
+                            rotation_angle -= 2*math.pi
+                        elif rotation_angle < -math.pi:
+                            rotation_angle += 2*math.pi
+                        else:
+                            break
+                    if to_goal[1]-rotation == 0:
                         break
-
+                    svL.rotate(9)
+                    svR.rotate(5.2)
+                    flag=2
             #dutyLを変える
+            """
             e = to_goal[1] - rotation_angle
             integral += e * dt
             M = Kp * e + Ki * integral + Kd * (e - e_prev) / dt
@@ -110,6 +120,7 @@ try:
 
             dutyL = 7.5 + 2.5*((zenshin + M) / 2)
             dutyR = 7.5 - 2.5*((zenshin - M) / 2)
+            """
 
             svL.rotate(dutyL)
             svR.rotate(dutyR)
