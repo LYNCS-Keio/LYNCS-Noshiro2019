@@ -5,6 +5,14 @@ from lib import MPU6050
 import math
 import time
 
+pinDMUX=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
+DMUX_out=[1,0,0] #出力ピン指定のHIGH,LOWデータ
+trigger,echo=19,26
+GPIO.setmode(GPIO.BCM)
+for count in range(3):
+    GPIO.setup(pinDMUX[count],GPIO.OUT)
+    GPIO.output(pinDMUX[count],DMUX_out[count]) #分離サーボの出力指定
+
 #画像誘導に切り替える距離(km)
 cam_dis = 0.01
 
