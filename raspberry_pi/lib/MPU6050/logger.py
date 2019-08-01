@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-import core as mpu
+import core
 import time
 import csv
 import os
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 #print(current_dir)
+
+mpu = core.MPU6050(0x68)
 
 index = 0
 filename = 'mpulog' + '%04d' % index
