@@ -45,6 +45,10 @@ goal_long = 139.655772
 
 correction = 0.825 #MPU補正値
 
+#PIDなし用変数。
+angle_range = math.radians(5) #目標角度との許容誤差
+spin_angle = math.radians(45)#回転を始める角度
+
 #位置座標を保存
 #回転角度
 def cal_rotation_angle(preT,p_g):
@@ -99,11 +103,17 @@ try:
                             rotation_angle += 2*math.pi
                         else:
                             break
-                    if to_goal[1]-rotation == 0:
+                    if -angle_range < to_goal[1]-rotation and to_goal[1]-rotation < angle_range:
                         break
                     svL.rotate(9)
                     svR.rotate(5.2)
-                    flag=2
+                    flag = 2
+            if flag == 2 :
+                    preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
+                    rotation_angle += now_rotation_angle
+                    if  -spin_angle< to_goal[1]-rotation and  to_goal[1]-rotation < spin_angle:
+                        flag = 1
+
             #dutyLを変える
             """
             e = to_goal[1] - rotation_angle
@@ -120,10 +130,10 @@ try:
 
             dutyL = 7.5 + 2.5*((zenshin + M) / 2)
             dutyR = 7.5 - 2.5*((zenshin - M) / 2)
-            """
 
             svL.rotate(dutyL)
             svR.rotate(dutyR)
+            """
             print(M,math.degrees(rotation_angle))
 finally:
     GPIO.cleanup()
