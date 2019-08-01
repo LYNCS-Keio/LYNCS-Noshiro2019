@@ -14,7 +14,7 @@ for count in range(3):
     GPIO.output(pinDMUX[count],DMUX_out[count]) #分離サーボの出力指定
 
 #画像誘導に切り替える距離(km)
-cam_dis = 0.01
+cam_dis = 0
 
 dutyL = 9.0
 dutyR = 5.2
