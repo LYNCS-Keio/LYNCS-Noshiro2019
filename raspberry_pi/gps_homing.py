@@ -85,6 +85,10 @@ try:
                 pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2]) #degree to radian
                 preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
                 rotation_angle += now_rotation_angle
+                if rotation_angle > math.pi:
+                    rotation_angle -= 2*math.pi
+                if rotation_angle < -math.pi:
+                    rotation_angle += 2*math.pi
 
             #dutyLを変える
             e = to_goal[1] - rotation_angle
