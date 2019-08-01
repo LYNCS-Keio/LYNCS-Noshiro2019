@@ -32,7 +32,7 @@ goal = 0.00
 e = 0.00
 e1 = 0.00
 e2 = 0.00
-Kp = 0.1
+Kp = 0.01
 Ki = 0.1
 Kd = 0.1
 
@@ -71,7 +71,7 @@ try:
                 rotation_angle = convert_now[1]
                 to_goal =  GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)
                 pre = now
-                #flag = 1
+                flag = 1
                 if to_goal[0] < cam_dis:
                     svR.rotate(7.5)
                     svL.rotate(7.5)
@@ -92,7 +92,8 @@ try:
             if e < math.pi/2 and e > -math.pi/2:
                 zenshin = 1
             else:
-                zenshin = 0
+                #zenshin = 0
+                pass
 
             if M > 1:
                 M = 1
