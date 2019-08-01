@@ -38,15 +38,16 @@ def cal_rotation_angle(preT,pre_gyro):
     return [nowT, now_gyro, now_rotation_angle]
 
 #着地
-pre = [None, None]
-while pre is None:
+pre=[None,None]
+while pre[0] is None:
     pre = GPS.lat_long_measurement()
 
 with servo.servo(pinL) as svL, servo.servo(pinR) as svR:
     svL.rotate(dutyL)
     svR.rotate(dutyR)
     MPU = MPU6050.MPU6050(0x68)
-
+    to_goal , rotation_angle = [1,0] , 0
+    flag = 0
     #goalとの距離が10m以下になったら画像での誘導
     while 1:
         now = [None, None]
@@ -56,12 +57,13 @@ with servo.servo(pinL) as svL, servo.servo(pinR) as svR:
             rotation_angle = convert_now[1]
             to_goal =  GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)
             pre = now
+            flag = 1
             if to_goal[0] < cam_dis:
                 svR.rotate(7.5)
                 svL.rotate(7.5)
                 break
 
-        else:
+        elif flag == 1:
             #回転
             pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2]) #degree to radian
             preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
