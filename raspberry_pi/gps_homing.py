@@ -101,10 +101,10 @@ try:
 
             zenshin = 1
 
-            if M > 1:
-                M = 1
-            if M < -1:
-                M = -1
+            #if M > 1:
+            #    M = 1
+            #if M < -1:
+            #    M = -1
 
             dutyL = 7.5 + 2.5*((zenshin + M) / 2)
             dutyR = 7.5 - 2.5*((zenshin - M) / 2)
