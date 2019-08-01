@@ -1,4 +1,4 @@
-form lib import MPU6050
+from lib import MPU6050
 import time
 rotation_angle = 0
 def cal_rotation_angle(preT,p_g):
