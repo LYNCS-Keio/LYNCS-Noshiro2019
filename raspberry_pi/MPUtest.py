@@ -16,3 +16,4 @@ while 1:
     preT, pre_gyro , now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
     rotation_angle += now_rotation_angle
     print("rotation_angle:" , rotation_angle)
+    time.sleep(0.5)
