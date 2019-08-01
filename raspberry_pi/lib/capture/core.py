@@ -16,11 +16,11 @@ class capture:
         self.camera = picamera.PiCamera()
         self.camera.resolution = (320, 240)
         self.camera.start_preview()
-        self.stream = io.BytesIO()
     
     def cap(self):
-        self.camera.capture(self.stream, 'jpeg')
-        data = np.fromstring(self.stream.getvalue(), dtype=np.uint8)
+        stream = io.BytesIO()
+        self.camera.capture(stream, 'jpeg')
+        data = np.fromstring(stream.getvalue(), dtype=np.uint8)
         image = cv2.imdecode(data, 1)
         return image
 
