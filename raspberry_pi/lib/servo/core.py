@@ -10,7 +10,6 @@ PWM signal: 50 Hz
 dutyCycle       5    -   7.5   -    10
 rotation    backward - nuetral - forward
 """
-import RPi.GPIO as GPIO
 import sys
 
 class servo:
