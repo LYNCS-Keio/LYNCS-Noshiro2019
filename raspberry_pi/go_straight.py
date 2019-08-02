@@ -43,7 +43,8 @@ try:
         dL, dR = 7.5 + 1.25 * (1 - m), 7.5 - 1.25 * (1 + m)
         svL.ChangeDutyCycle(dL)
         svR.ChangeDutyCycle(dR)
-        print ([m,dL,dR])
+        print([m, dL, dR])
+        time.sleep(0.01)
 
 finally:
     svL.stop()
