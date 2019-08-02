@@ -20,7 +20,7 @@ svL.start(7.5)
 svR.start(7.5)
 
 mpu = MPU6050.MPU6050(0x68)
-p = pid_controll.pid(0.1, 0.4, 0.1)
+p = pid_controll.pid(0.1, 0.4, 0.4)
 pre_gyro = mpu.get_gyro_data_lsb()[2] - drift
 pt = time.time()
 
