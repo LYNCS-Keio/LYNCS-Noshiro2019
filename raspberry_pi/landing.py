@@ -23,55 +23,58 @@ BME.get_calib_param()
 
 count_BME = 3 #BMEがn回連続で範囲内になったらbreak
 
-with servo.servo(pinPWM) as sv: #パラ機構ロック
-    sv.rotate(8.5)
+try:
+    with servo.servo(pinPWM) as sv: #パラ機構ロック
+        sv.rotate(8.5)
 
-    '''
-    #キャリア判定
-    with MPU6050.MPU6050(0x68) as mpu:
-        pre_g = mpu.get_accel_data_lsb()[2]
-        while 1:
-            g = mpu.get_accel_data_lsb()[2]
-            if g <= 0.5 and pre_g < 0.5:
+        '''
+        #キャリア判定
+        with MPU6050.MPU6050(0x68) as mpu:
+            pre_g = mpu.get_accel_data_lsb()[2]
+            while 1:
+                g = mpu.get_accel_data_lsb()[2]
+                if g <= 0.5 and pre_g < 0.5:
+                    break
+                pre_g = g
+        '''
+
+        now_t = time.time()
+
+        '''
+        count = 0
+        while 1: #meter
+            height = BME.readData()
+            if height <= 5:
+                count += 1
+            else :
+                count = 0
+            if count >= count_BME:
                 break
-            pre_g = g
-    '''
+        '''
 
-    now_t = time.time()
-
-    '''
-    count = 0
-    while 1: #meter
-        height = BME.readData()
-        if height <= 5:
-            count += 1
-        else :
-            count = 0
-        if count >= count_BME:
-            break
-    '''
+        while 1:
+            with HCSR04.HCSR04(trigger,echo) as hcs:
+                height = hcs.readData(34300)
+                print (height)
+                if (time.time()-now_t > break_time) or ((50 <= height) and (height <= 200)):
+                    break
+        sv.rotate(7.6)
+    """
+    #着陸判定
 
     while 1:
-        with HCSR04.HCSR04(trigger,echo) as hcs:
-            height = hcs.readData(34300)
-            print (height)
-            if (time.time()-now_t > break_time) or ((50 <= height) and (height <= 200)):
-                break
-    sv.rotate(7.6)
-"""
-#着陸判定
+        a_x,a_y,a_z = MPU.get_accel_data_lsb()
+        accel=((a_x-a_y)**2+(a_y-a_z)**2+(a_z-a_x)**2)**0.5
+        if 1+extent > accel and accel > 1-extent :
+            if flag == 0:
+                flag=1
+                _time = time.time()
+        else:
+            flag=0
+            _time=0
 
-while 1:
-    a_x,a_y,a_z = MPU.get_accel_data_lsb()
-    accel=((a_x-a_y)**2+(a_y-a_z)**2+(a_z-a_x)**2)**0.5
-    if 1+extent > accel and accel > 1-extent :
-        if flag == 0:
-            flag=1
-            _time = time.time()
-    else:
-        flag=0
-        _time=0
-
-    if time.time()-now_t > break_time or time.time()-_time <= time_range :
-        break
-"""
+        if time.time()-now_t > break_time or time.time()-_time <= time_range :
+            break
+    """
+finally:
+    GPIO.cleanup()
