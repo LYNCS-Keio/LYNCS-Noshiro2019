@@ -6,6 +6,10 @@ from lib import MPU6050
 #from lib import servo
 import RPi.GPIO as GPIO
 import time
+import csv
+import os
+
+
 sound_velocity = 34300
 time_range=5 #加速度が落ち着いている判定の判定時間
 break_time=30 #キャリア判定からの経過時間による着陸判定用
@@ -14,6 +18,7 @@ pinDMUX=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
 DMUX_out=[1,0,0] #出力ピン指定のHIGH,LOWデータ
 pinPWM=18 #マルチプレクサ側PWMのピン
 trigger, echo = 19, 26
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -36,64 +41,41 @@ BME.get_calib_param()
 count_BME = 3 #BMEがn回連続で範囲内になったらbreak
 
 try:
-    '''
-    #キャリア判定
-    with MPU6050.MPU6050(0x68) as mpu:
-        pre_g = mpu.get_accel_data_lsb()[2]
+    index = 0
+    filename = 'mpulog' + '%04d' % index
+    while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
+    index += 1
+    filename = 'mpulog' + '%04d' % index
+    with open(current_dir + '/' + filename + '.csv', 'w') as c:
+        f = csv.writer(c, lineterminator='\n')
+        
+        now_t = time.time()
+
         while 1:
-            g = mpu.get_accel_data_lsb()[2]
-            if g <= 0.5 and pre_g < 0.5:
+            gyro = mpu.get_gyro_data_lsb()
+            accel = mpu.get_accel_data_lsb()
+            row = [time.time()]
+            row.extend(gyro)
+            row.extend(accel)
+            f.writerow(row)
+            time.sleep(0.01)
+
+            GPIO.output(trigger, True)
+            time.sleep(0.000010)
+            GPIO.output(trigger, False)
+
+            GPIO.wait_for_edge(echo, GPIO.RISING, timeout=10)
+            time_1 = time.time()
+            GPIO.wait_for_edge(echo, GPIO.FALLING, timeout=15)
+            delta = time.time() - time_1 + 0.0002
+
+            distance = (delta * sound_velocity) / 2
+            print(distance)
+            if (time.time()-now_t > break_time) or ((70 <= distance) and (distance <= 200)):
                 break
-            pre_g = g
-    '''
-
-    now_t = time.time()
-
-    '''
-    count = 0
-    while 1: #meter
-        height = BME.readData()
-        if height <= 5:
-            count += 1
-        else :
-            count = 0
-        if count >= count_BME:
-            break
-    '''
-
-    while 1:
-        GPIO.output(trigger, True)
-        time.sleep(0.000010)
-        GPIO.output(trigger, False)
-
-        GPIO.wait_for_edge(echo, GPIO.RISING, timeout=10)
-        time_1 = time.time()
-        GPIO.wait_for_edge(echo, GPIO.FALLING, timeout=15)
-        delta = time.time() - time_1 + 0.0002
-
-        distance = (delta * sound_velocity) / 2
-        print(distance)
-        if (time.time()-now_t > break_time) or ((70 <= distance) and (distance <= 200)):
-            break
-        time.sleep(0.01)
-    sv.ChangeDutyCycle(7.6)
-    """
-    #着陸判定
-
-    while 1:
-        a_x,a_y,a_z = MPU.get_accel_data_lsb()
-        accel=((a_x-a_y)**2+(a_y-a_z)**2+(a_z-a_x)**2)**0.5
-        if 1+extent > accel and accel > 1-extent :
-            if flag == 0:
-                flag=1
-                _time = time.time()
-        else:
-            flag=0
-            _time=0
-
-        if time.time()-now_t > break_time or time.time()-_time <= time_range :
-            break
-    """
+            time.sleep(0.01)
+        sv.ChangeDutyCycle(7.6)
+  
 finally:
     time.sleep(1)
     sv.stop()
