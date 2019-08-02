@@ -37,9 +37,9 @@ try:
         rotation += gyro * dt
         m = p.update_pid(0, rotation, dt)
 
-        m = min([max([m, -1]), 1])
+        m1 = min([max([m, -1]), 1])
 
-        dL, dR = 7.5 + 1.25 * (1 + m), 7.5 - 1.25 * (1 - m)
+        dL, dR = 7.5 + 1.25 * (1 - m1), 7.5 - 1.25 * (1 + m1)
         svL.ChangeDutyCycle(dL)
         svR.ChangeDutyCycle(dR)
         print([m, dL, dR])
