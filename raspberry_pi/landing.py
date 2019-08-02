@@ -24,6 +24,7 @@ count_BME = 3 #BMEがn回連続で範囲内になったらbreak
 with servo.servo(pinPWM) as sv: #パラ機構ロック
     sv.rotate(8.5)
 
+    '''
     #キャリア判定
     with MPU6050.MPU6050(0x68) as mpu:
         pre_g = mpu.get_accel_data_lsb()[2]
@@ -32,9 +33,11 @@ with servo.servo(pinPWM) as sv: #パラ機構ロック
             if g <= 0.5 and pre_g < 0.5:
                 break
             pre_g = g
+    '''
 
     now_t = time.time()
 
+    '''
     count = 0
     while 1: #meter
         height = BME.readData()
@@ -44,6 +47,7 @@ with servo.servo(pinPWM) as sv: #パラ機構ロック
             count = 0
         if count >= count_BME:
             break
+    '''
 
     while 1:
         with HCSR04.HCSR04(trigger,echo) as hcs:
