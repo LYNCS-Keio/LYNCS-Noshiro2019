@@ -25,6 +25,9 @@ for index in range(0,2):
     GPIO.setup(pinDMUX[index],GPIO.OUT)
     GPIO.output(pinDMUX[index],DMUX_out[index]) #分離サーボの出力指定
 
+sv = GPIO.PWM(pinPWM, 50)
+sv.start(8.5)
+
 '''
 BME.setup()
 BME.get_calib_param()
@@ -33,11 +36,6 @@ BME.get_calib_param()
 count_BME = 3 #BMEがn回連続で範囲内になったらbreak
 
 try:
-    sv = GPIO.PWM(pinPWM, 50)
-    sv.start(7.5)
-
-    sv.ChangeDutyCycle(8.5)
-
     '''
     #キャリア判定
     with MPU6050.MPU6050(0x68) as mpu:
@@ -77,6 +75,7 @@ try:
         print(distance)
         if (time.time()-now_t > break_time) or ((70 <= distance) and (distance <= 200)):
             break
+        time.sleep(0.01)
     sv.ChangeDutyCycle(7.6)
     """
     #着陸判定
@@ -95,7 +94,7 @@ try:
         if time.time()-now_t > break_time or time.time()-_time <= time_range :
             break
     """
-    time.sleep(0.01)
 finally:
+    time.sleep(1)
     sv.stop()
     GPIO.cleanup()
