@@ -84,6 +84,8 @@ try:
                     preT = time.time()
                     pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2])
                     flag = 1
+                    print(pre)
+                    print(now,to_goal)
                 pre = now
                 if to_goal[0] <= cam_dis:
                     svR.rotate(7.5)
