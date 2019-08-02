@@ -26,6 +26,8 @@ GPIO.setup(trigger, GPIO.OUT)
 GPIO.setup(pinPWM, GPIO.OUT)
 GPIO.setup(echo, GPIO.IN)
 
+mpu = MPU6050.MPU6050(0x68)
+
 for index in range(0,2):
     GPIO.setup(pinDMUX[index],GPIO.OUT)
     GPIO.output(pinDMUX[index],DMUX_out[index]) #分離サーボの出力指定
