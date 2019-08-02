@@ -21,7 +21,7 @@ GPIO.output(DMUX_pin[2], DMUX_out[2])
 #画像誘導に切り替える距離(km)
 cam_dis = 0
 
-dutyL = 7.8
+dutyL = 7.75
 dutyR = 6.0
 pinL = 13
 pinR = 18
@@ -104,6 +104,9 @@ try:
                         else:
                             break
                     if (-angle_range < (to_goal[1] - rotation_angle)) and ((to_goal[1] - rotation_angle) < angle_range):
+                        svL.rotate(7.5)
+                        svR.rotate(7.5)
+                        time.sleep(0.2)
                         svL.rotate(dutyL)
                         svR.rotate(dutyR)
                         print ("flag == 1")
@@ -119,7 +122,7 @@ try:
                             rotation_angle += 2*math.pi
                         else:
                             break
-                    if  (-spin_angle > (to_goal[1] - rotation_angle)) and  ((to_goal[1] - rotation_angle) > spin_angle):
+                    if (-spin_angle > (to_goal[1] - rotation_angle)) or ((to_goal[1] - rotation_angle) > spin_angle):
                         flag = 1
 
             #dutyLを変える
