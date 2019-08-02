@@ -2,7 +2,7 @@
 #!/usr/bin/python
 
 # import module
-import smbus		# use I2C
+from smbus2 import SMBus		# use I2C
 import math  # mathmatics
 import time
 
@@ -81,7 +81,7 @@ class MPU6050():
     # theta : horizon - x_axis
     # psi : horizon - y_axis
     # phi : perpendicular - z_axis
-    # 
+    #
 
     def slope_accel(self, x, y, z):   #radian
         self.theta = math.atan(x / (y*y + z*z)**0.5)
