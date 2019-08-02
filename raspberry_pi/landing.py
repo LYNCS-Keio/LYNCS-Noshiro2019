@@ -78,23 +78,23 @@ try:
         if (time.time()-now_t > break_time) or ((50 <= distance) and (distance <= 200)):
             break
     sv.ChangeDutyCycle(7.6)
-"""
-#着陸判定
+    """
+    #着陸判定
 
-while 1:
-    a_x,a_y,a_z = MPU.get_accel_data_lsb()
-    accel=((a_x-a_y)**2+(a_y-a_z)**2+(a_z-a_x)**2)**0.5
-    if 1+extent > accel and accel > 1-extent :
-        if flag == 0:
-            flag=1
-            _time = time.time()
-    else:
-        flag=0
-        _time=0
+    while 1:
+        a_x,a_y,a_z = MPU.get_accel_data_lsb()
+        accel=((a_x-a_y)**2+(a_y-a_z)**2+(a_z-a_x)**2)**0.5
+        if 1+extent > accel and accel > 1-extent :
+            if flag == 0:
+                flag=1
+                _time = time.time()
+        else:
+            flag=0
+            _time=0
 
-    if time.time()-now_t > break_time or time.time()-_time <= time_range :
-        break
-"""
+        if time.time()-now_t > break_time or time.time()-_time <= time_range :
+            break
+    """
 finally:
     sv.stop()
     GPIO.cleanup()
