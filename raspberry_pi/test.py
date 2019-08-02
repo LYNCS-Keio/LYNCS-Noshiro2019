@@ -1,8 +1,9 @@
 import time
-from lib import HCSR04
+from lib import servo
 
-with HCSR04.HCSR04(19, 26) as hcs:
+with servo.servo(18) as sv:
     while True:
-        print(hcs.readData(34300))
-        height = hcs.readData(34300)
-        print(height)
+        sv.rotate(7.5)
+        time.sleep(1)
+        sv.rotate(9)
+        time.sleep(1)
