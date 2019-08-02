@@ -25,6 +25,7 @@ dutyL = 7.73
 dutyR = 5.81
 pinL = 13
 pinR = 18
+"""
 #PID
 M = 0.00
 M1 =  0.00
@@ -36,18 +37,16 @@ dt = 0.01
 Kp = 0.1
 Ki = 1.8
 Kd = 0.003
-
+"""
 #goalの座標
 goal_lat = 35.555437
 goal_long = 139.655772
 
 correction = 0.825 #MPU補正値
 
-"""
 #PIDなし用変数。
 angle_range = math.radians(5) #目標角度との許容誤差
 spin_angle = math.radians(30)#回転を始める角度
-"""
 
 class servo:
     def __init__(self, pin):
@@ -114,19 +113,19 @@ try:
                     break #...(#)
 
             if flag == 1:
-                #svR.rotate(dutyL)
-                #svL.rotate(dutyL)
-                #while 1:
-                preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
-                rotation_angle += now_rotation_angle
+                svR.rotate(dutyL)
+                svL.rotate(dutyL)
                 while 1:
-                    if rotation_angle > math.pi:
-                        rotation_angle -= 2*math.pi
-                    elif rotation_angle < -math.pi:
-                        rotation_angle += 2*math.pi
-                    else:
-                        break
-                    """
+                    preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
+                    rotation_angle += now_rotation_angle
+                    while 1:
+                        if rotation_angle > math.pi:
+                            rotation_angle -= 2*math.pi
+                        elif rotation_angle < -math.pi:
+                            rotation_angle += 2*math.pi
+                        else:
+                            break
+
                     if (-angle_range < (to_goal[1] - rotation_angle)) and ((to_goal[1] - rotation_angle) < angle_range):
                         svL.rotate(7.5)
                         svR.rotate(7.5)
@@ -169,6 +168,7 @@ try:
 
             svL.rotate(dutyL)
             svR.rotate(dutyR)
+            """
             print(M , flag , math.degrees(rotation_angle) , math.degrees(to_goal[1] - rotation_angle))
 finally:
     GPIO.cleanup()
