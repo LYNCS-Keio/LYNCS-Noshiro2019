@@ -53,9 +53,9 @@ with servo.servo(pinPWM) as sv: #パラ機構ロック
 
     while 1:
         with HCSR04.HCSR04(trigger,echo) as hcs:
-            height = hcs.readData()
+            height = hcs.readData(vel)
             print (height)
-            if time.time()-now_t > break_time or height <= 200:
+            if (time.time()-now_t > break_time) or ((50 <= height) and (height <= 200)):
                 break
     sv.rotate(7.6)
 """
