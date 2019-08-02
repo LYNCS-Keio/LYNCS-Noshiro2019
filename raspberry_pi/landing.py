@@ -95,6 +95,7 @@ try:
         if time.time()-now_t > break_time or time.time()-_time <= time_range :
             break
     """
+    time.sleep(0.01)
 finally:
     sv.stop()
     GPIO.cleanup()
