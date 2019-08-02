@@ -68,8 +68,10 @@ try:
             GPIO.wait_for_edge(echo, GPIO.FALLING, timeout=15)
             delta = time.time() - time_1 + 0.0002
 
-            distance = (delta * sound_velocity)/2
-            sv.rotate(7.6)
+            distance = (delta * sound_velocity) / 2
+            if (time.time()-now_t > break_time) or ((50 <= distance) and (distance <= 200)):
+                break
+        sv.rotate(7.6)
     """
     #着陸判定
 
