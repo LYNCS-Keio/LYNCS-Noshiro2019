@@ -11,11 +11,11 @@ mpu = core.MPU6050(0x68)
 
 index = 0
 filename = 'mpulog' + '%04d' % index
-while os.path.isfile(current_dir + '/' + filename + '.log') == True:
+while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
     index += 1
     filename = 'mpulog' + '%04d' % index
 
-with open(current_dir + '/' + filename + '.log', 'w') as c:
+with open(current_dir + '/' + filename + '.csv', 'w') as c:
     f = csv.writer(c, lineterminator='\n')
     while True:
         gyro = mpu.get_gyro_data_lsb()
