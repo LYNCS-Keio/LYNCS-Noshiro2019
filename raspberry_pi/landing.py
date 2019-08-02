@@ -44,8 +44,8 @@ try:
     index = 0
     filename = 'mpulog' + '%04d' % index
     while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
-    index += 1
-    filename = 'mpulog' + '%04d' % index
+        index += 1
+        filename = 'mpulog' + '%04d' % index
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
         f = csv.writer(c, lineterminator='\n')
         
