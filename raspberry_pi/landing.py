@@ -1,17 +1,23 @@
 #from lib import BME280 as BME
-from lib import HCSR04
+#from lib import HCSR04
 from lib import MPU6050
 from lib import servo
 import RPi.GPIO as GPIO
 import time
+sound_velocity = 34300
 time_range=5 #加速度が落ち着いている判定の判定時間
 break_time=30 #キャリア判定からの経過時間による着陸判定用
 extent=0.02 #MPUの誤差込みの判定にするための変数
 pinDMUX=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
 DMUX_out=[1,0,0] #出力ピン指定のHIGH,LOWデータ
 pinPWM=18 #マルチプレクサ側PWMのピン
-trigger,echo=19,26
+trigger, echo = 19, 26
+
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(trigger, GPIO.OUT)
+GPIO.setup(echo, GPIO.IN)
+
 for index in range(0,2):
     GPIO.setup(pinDMUX[index],GPIO.OUT)
     GPIO.output(pinDMUX[index],DMUX_out[index]) #分離サーボの出力指定
@@ -53,11 +59,17 @@ try:
         '''
 
         while 1:
-            hcs = HCSR04.HCSR04(trigger, echo)
-            height = hcs.readData(34300)
-            if (time.time()-now_t > break_time) or ((50 <= height) and (height <= 200)):
-                break
-        sv.rotate(7.6)
+            GPIO.output(trigger, True)
+            time.sleep(0.000010)
+            GPIO.output(trigger, False)
+
+            GPIO.wait_for_edge(echo, GPIO.RISING, timeout=10)
+            time_1 = time.time()
+            GPIO.wait_for_edge(echo, GPIO.FALLING, timeout=15)
+            delta = time.time() - time_1 + 0.0002
+
+            distance = (delta * sound_velocity)/2
+            sv.rotate(7.6)
     """
     #着陸判定
 
