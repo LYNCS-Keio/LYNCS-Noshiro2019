@@ -21,8 +21,8 @@ GPIO.output(DMUX_pin[2], DMUX_out[2])
 #画像誘導に切り替える距離(km)
 cam_dis = 0
 
-dutyL = 9.0
-dutyR = 5.2
+dutyL = 7.7
+dutyR = 6.0
 pinL = 13
 pinR = 18
 #PID
