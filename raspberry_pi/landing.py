@@ -69,6 +69,7 @@ try:
             delta = time.time() - time_1 + 0.0002
 
             distance = (delta * sound_velocity) / 2
+            print(distance)
             if (time.time()-now_t > break_time) or ((50 <= distance) and (distance <= 200)):
                 break
         sv.rotate(7.6)
