@@ -2,7 +2,7 @@
 #!/usr/bin/python
 
 # import module
-import smbus		# use I2C
+import smbus2		# use I2C
 import math  # mathmatics
 import time
 
