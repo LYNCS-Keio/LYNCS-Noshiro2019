@@ -46,8 +46,8 @@ goal_long = 139.655772
 correction = 0.825 #MPU補正値
 
 #PIDなし用変数。
-angle_range = math.radians(5) #目標角度との許容誤差
-spin_angle = math.radians(45)#回転を始める角度
+angle_range = math.radians(2) #目標角度との許容誤差
+spin_angle = math.radians(10)#回転を始める角度
 
 #位置座標を保存
 #回転角度
@@ -83,16 +83,16 @@ try:
                     rotation_angle = GPS.convert_lat_long_to_r_theta(pre[0],pre[1],now[0],now[1])[1]
                     preT = time.time()
                     pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2])
+                    flag = 1
                 pre = now
-                flag = 1
-                if to_goal[0] < cam_dis:
+                if to_goal[0] <= cam_dis:
                     svR.rotate(7.5)
                     svL.rotate(7.5)
                     break
 
             if flag == 1:
-                svR.rotate(9)
-                svL.rotate(9)
+                svR.rotate(dutyL)
+                svL.rotate(dutyL)
                 while 1:
                     preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
                     rotation_angle += now_rotation_angle
@@ -104,10 +104,10 @@ try:
                         else:
                             break
                     if -angle_range < to_goal[1] - rotation_angle and to_goal[1] - rotation_angle < angle_range:
+                        svL.rotate(dutyL)
+                        svR.rotate(dutyR)
+                        flag = 2
                         break
-                    svL.rotate(9)
-                    svR.rotate(5.2)
-                    flag = 2
             if flag == 2 :
                     preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
                     rotation_angle += now_rotation_angle
