@@ -1,4 +1,4 @@
-from lib import BME280 as BME
+#from lib import BME280 as BME
 from lib import HCSR04
 from lib import MPU6050
 from lib import servo
