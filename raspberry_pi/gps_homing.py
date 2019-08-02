@@ -84,6 +84,8 @@ try:
                     preT = time.time()
                     pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2])
                     flag = 1
+                    to_goal[1] = 0
+                    rotation_angle = 90
                     print(pre)
                     print(now,to_goal)
                 pre = now
