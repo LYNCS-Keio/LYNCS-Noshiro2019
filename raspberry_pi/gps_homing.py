@@ -7,7 +7,7 @@ import math
 import time
 
 DMUX_pin=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
-DMUX_out = [1, 0, 0]  #出力ピン指定のHIGH,LOWデータ
+DMUX_out = [0, 0, 0]  #出力ピン指定のHIGH,LOWデータ
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(DMUX_pin[0], GPIO.OUT)
@@ -45,7 +45,7 @@ goal_long = 139.655772
 
 correction = 0.825 #MPU補正値
 
-#PIDなし用変数。 
+#PIDなし用変数。
 angle_range = math.radians(10) #目標角度との許容誤差
 spin_angle = math.radians(30)#回転を始める角度
 
