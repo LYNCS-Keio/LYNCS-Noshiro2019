@@ -2,7 +2,6 @@
 from lib import rover_gps as GPS
 from lib import servo
 from lib import MPU6050
-import RPi.GPIO as GPIO
 import math
 import time
 
