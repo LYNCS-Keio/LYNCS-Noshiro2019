@@ -75,7 +75,7 @@ try:
 
         distance = (delta * sound_velocity) / 2
         print(distance)
-        if (time.time()-now_t > break_time) or ((50 <= distance) and (distance <= 200)):
+        if (time.time()-now_t > break_time) or ((70 <= distance) and (distance <= 200)):
             break
     sv.ChangeDutyCycle(7.6)
     """
