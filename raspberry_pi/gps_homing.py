@@ -26,17 +26,17 @@ dutyR = 5.2
 pinL = 13
 pinR = 18
 #PID
-"""
 M = 0.00
+"""
 M1 =  0.00
 goal = 0.00
 e = 0.00
 e_prev = 0.00
 integral = 0.0
 dt = 0.01
-Kp = 0.09
-Ki = 2
-Kd = 0.004
+Kp = 0.1
+Ki = 1.8
+Kd = 0.003
 """
 
 #goalの座標
@@ -103,7 +103,7 @@ try:
                             rotation_angle += 2*math.pi
                         else:
                             break
-                    if -angle_range < to_goal[1]-rotation and to_goal[1]-rotation < angle_range:
+                    if -angle_range < to_goal[1] - rotation_angle and to_goal[1] - rotation_angle < angle_range:
                         break
                     svL.rotate(9)
                     svR.rotate(5.2)
@@ -111,7 +111,7 @@ try:
             if flag == 2 :
                     preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
                     rotation_angle += now_rotation_angle
-                    if  -spin_angle< to_goal[1]-rotation and  to_goal[1]-rotation < spin_angle:
+                    if  -spin_angle > to_goal[1] - rotation_angle and  to_goal[1] - rotation_angle > spin_angle:
                         flag = 1
 
             #dutyLを変える
@@ -123,10 +123,10 @@ try:
 
             zenshin = 1
 
-            #if M > 1:
-            #    M = 1
-            #if M < -1:
-            #    M = -1
+            if M > 1:
+                M = 1
+            if M < -1:
+                M = -1
 
             dutyL = 7.5 + 2.5*((zenshin + M) / 2)
             dutyR = 7.5 - 2.5*((zenshin - M) / 2)
@@ -134,7 +134,7 @@ try:
             svL.rotate(dutyL)
             svR.rotate(dutyR)
             """
-            print(M,math.degrees(rotation_angle))
+            print(M , math.degrees(rotation_angle) , math.degrees(to_goal[1] - rotation_angle))
 finally:
     GPIO.cleanup()
     svL = None
