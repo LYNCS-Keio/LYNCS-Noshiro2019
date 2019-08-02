@@ -21,7 +21,7 @@ GPIO.output(DMUX_pin[2], DMUX_out[2])
 #画像誘導に切り替える距離(km)
 cam_dis = 0
 
-dutyL = 7.7
+dutyL = 7.8
 dutyR = 6.0
 pinL = 13
 pinR = 18
@@ -73,7 +73,7 @@ try:
         to_goal , rotation_angle = [1,0] , 0
         flag = 0
         #goalとの距離が10m以下になったら画像での誘導
-        while 1:
+        while 1: #...(*)
             now = [None, None]
             now = GPS.lat_long_measurement()
             if now[0] != None and now[1] != None:
@@ -88,7 +88,7 @@ try:
                 if to_goal[0] <= cam_dis:
                     svR.rotate(7.5)
                     svL.rotate(7.5)
-                    break
+                    break #...(#)
 
             if flag == 1:
                 svR.rotate(dutyL)
@@ -134,7 +134,7 @@ try:
             svL.rotate(dutyL)
             svR.rotate(dutyR)
             """
-            print(M , math.degrees(rotation_angle) , math.degrees(to_goal[1] - rotation_angle))
+            print(M , flag , math.degrees(rotation_angle) , math.degrees(to_goal[1] - rotation_angle))
 finally:
     GPIO.cleanup()
     svL = None
