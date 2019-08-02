@@ -1,5 +1,8 @@
 import time
 from lib import servo
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
 
 with servo.servo(18) as sv:
     while True:
