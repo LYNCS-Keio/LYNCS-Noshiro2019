@@ -16,8 +16,10 @@ for index in range(0,2):
     GPIO.setup(pinDMUX[index],GPIO.OUT)
     GPIO.output(pinDMUX[index],DMUX_out[index]) #分離サーボの出力指定
 
+'''
 BME.setup()
 BME.get_calib_param()
+'''
 
 count_BME = 3 #BMEがn回連続で範囲内になったらbreak
 
