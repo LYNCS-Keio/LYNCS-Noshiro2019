@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+
 #from lib import BME280 as BME
 #from lib import HCSR04
 from lib import MPU6050
-from lib import servo
+#from lib import servo
 import RPi.GPIO as GPIO
 import time
 sound_velocity = 34300
@@ -16,6 +18,7 @@ trigger, echo = 19, 26
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(trigger, GPIO.OUT)
+GPIO.setup(pinPWM, GPIO.OUT)
 GPIO.setup(echo, GPIO.IN)
 
 for index in range(0,2):
@@ -30,66 +33,68 @@ BME.get_calib_param()
 count_BME = 3 #BMEがn回連続で範囲内になったらbreak
 
 try:
-    with servo.servo(pinPWM) as sv: #パラ機構ロック
-        sv.rotate(8.5)
+    sv = GPIO.PWM(pinPWM, 50)
+    sv.start(7.5)
 
-        '''
-        #キャリア判定
-        with MPU6050.MPU6050(0x68) as mpu:
-            pre_g = mpu.get_accel_data_lsb()[2]
-            while 1:
-                g = mpu.get_accel_data_lsb()[2]
-                if g <= 0.5 and pre_g < 0.5:
-                    break
-                pre_g = g
-        '''
+    sv.ChangeDutyCycle(8.5)
 
-        now_t = time.time()
-
-        '''
-        count = 0
-        while 1: #meter
-            height = BME.readData()
-            if height <= 5:
-                count += 1
-            else :
-                count = 0
-            if count >= count_BME:
-                break
-        '''
-
+    '''
+    #キャリア判定
+    with MPU6050.MPU6050(0x68) as mpu:
+        pre_g = mpu.get_accel_data_lsb()[2]
         while 1:
-            GPIO.output(trigger, True)
-            time.sleep(0.000010)
-            GPIO.output(trigger, False)
-
-            GPIO.wait_for_edge(echo, GPIO.RISING, timeout=10)
-            time_1 = time.time()
-            GPIO.wait_for_edge(echo, GPIO.FALLING, timeout=15)
-            delta = time.time() - time_1 + 0.0002
-
-            distance = (delta * sound_velocity) / 2
-            print(distance)
-            if (time.time()-now_t > break_time) or ((50 <= distance) and (distance <= 200)):
+            g = mpu.get_accel_data_lsb()[2]
+            if g <= 0.5 and pre_g < 0.5:
                 break
-        sv.rotate(7.6)
-    """
-    #着陸判定
+            pre_g = g
+    '''
+
+    now_t = time.time()
+
+    '''
+    count = 0
+    while 1: #meter
+        height = BME.readData()
+        if height <= 5:
+            count += 1
+        else :
+            count = 0
+        if count >= count_BME:
+            break
+    '''
 
     while 1:
-        a_x,a_y,a_z = MPU.get_accel_data_lsb()
-        accel=((a_x-a_y)**2+(a_y-a_z)**2+(a_z-a_x)**2)**0.5
-        if 1+extent > accel and accel > 1-extent :
-            if flag == 0:
-                flag=1
-                _time = time.time()
-        else:
-            flag=0
-            _time=0
+        GPIO.output(trigger, True)
+        time.sleep(0.000010)
+        GPIO.output(trigger, False)
 
-        if time.time()-now_t > break_time or time.time()-_time <= time_range :
+        GPIO.wait_for_edge(echo, GPIO.RISING, timeout=10)
+        time_1 = time.time()
+        GPIO.wait_for_edge(echo, GPIO.FALLING, timeout=15)
+        delta = time.time() - time_1 + 0.0002
+
+        distance = (delta * sound_velocity) / 2
+        print(distance)
+        if (time.time()-now_t > break_time) or ((50 <= distance) and (distance <= 200)):
             break
-    """
+    sv.ChangeDutyCycle(7.6)
+"""
+#着陸判定
+
+while 1:
+    a_x,a_y,a_z = MPU.get_accel_data_lsb()
+    accel=((a_x-a_y)**2+(a_y-a_z)**2+(a_z-a_x)**2)**0.5
+    if 1+extent > accel and accel > 1-extent :
+        if flag == 0:
+            flag=1
+            _time = time.time()
+    else:
+        flag=0
+        _time=0
+
+    if time.time()-now_t > break_time or time.time()-_time <= time_range :
+        break
+"""
 finally:
+    sv.stop()
     GPIO.cleanup()
-    sv = None
