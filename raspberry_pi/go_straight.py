@@ -21,7 +21,6 @@ svR.start(7.5)
 
 mpu = MPU6050.MPU6050(0x68)
 p = pid_controll.pid(0.1, 0.4, 0.1)
-pre_gyro = mpu.get_gyro_data_lsb()[2] - drift
 pt = time.time()
 
 
@@ -35,7 +34,7 @@ try:
         nt = time.time()
         dt = nt - pt
         pt = nt
-        rotation += (pre_gyro + gyro) * dt / 2
+        rotation += gyro * dt
         m = p.update_pid(0, rotation, dt)
 
         m = min([max([m, -1]), 1])
