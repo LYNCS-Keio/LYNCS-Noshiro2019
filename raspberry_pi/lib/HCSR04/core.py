@@ -21,6 +21,7 @@ class HCSR04:
         GPIO.setwarnings(False)
         GPIO.setup(self.trig, GPIO.OUT)
         GPIO.setup(self.echo, GPIO.IN)
+        print ("HCSR04 init")
 
 
     def __enter__(self):
