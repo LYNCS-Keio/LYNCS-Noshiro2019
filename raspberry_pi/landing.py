@@ -92,3 +92,4 @@ try:
     """
 finally:
     GPIO.cleanup()
+    sv = None
