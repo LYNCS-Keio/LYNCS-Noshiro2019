@@ -46,7 +46,7 @@ try:
 
 finally:
     svL.stop()
-    avR.stop()
+    svR.stop()
     gpio.cleanup()
         
 
