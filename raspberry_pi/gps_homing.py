@@ -103,7 +103,7 @@ try:
                             rotation_angle += 2*math.pi
                         else:
                             break
-                    if -angle_range < to_goal[1] - rotation_angle and to_goal[1] - rotation_angle < angle_range:
+                    if (-angle_range < to_goal[1] - rotation_angle) and (to_goal[1] - rotation_angle < angle_range):
                         svL.rotate(dutyL)
                         svR.rotate(dutyR)
                         flag = 2
@@ -111,7 +111,7 @@ try:
             if flag == 2 :
                     preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
                     rotation_angle += now_rotation_angle
-                    if  -spin_angle > to_goal[1] - rotation_angle and  to_goal[1] - rotation_angle > spin_angle:
+                    if  (-spin_angle > to_goal[1] - rotation_angle) and  (to_goal[1] - rotation_angle > spin_angle):
                         flag = 1
 
             #dutyLを変える
