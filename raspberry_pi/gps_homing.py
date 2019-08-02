@@ -46,8 +46,8 @@ goal_long = 139.655772
 correction = 0.825 #MPU補正値
 
 #PIDなし用変数。
-angle_range = math.radians(20) #目標角度との許容誤差
-spin_angle = math.radians(20)#回転を始める角度
+angle_range = math.radians(10) #目標角度との許容誤差
+spin_angle = math.radians(30)#回転を始める角度
 
 #位置座標を保存
 #回転角度
