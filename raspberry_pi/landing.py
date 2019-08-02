@@ -53,11 +53,10 @@ try:
         '''
 
         while 1:
-            with HCSR04.HCSR04(trigger, echo) as hcs:
-                print(hcs.readData(34300))
-                height = hcs.readData(34300)
-                if (time.time()-now_t > break_time) or ((50 <= height) and (height <= 200)):
-                    break
+            hcs = HCSR04.HCSR04(trigger, echo)
+            height = hcs.readData(34300)
+            if (time.time()-now_t > break_time) or ((50 <= height) and (height <= 200)):
+                break
         sv.rotate(7.6)
     """
     #着陸判定
