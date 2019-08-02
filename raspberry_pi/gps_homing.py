@@ -1,12 +1,13 @@
 # -*- coding:utf-8 -
 from lib import rover_gps as GPS
-from lib import servo
+#from lib import servo
 from lib import MPU6050
+import RPi.GPIO as GPIO
 import math
 import time
 
 DMUX_pin=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
-DMUX_out = [0, 0, 0]  #出力ピン指定のHIGH,LOWデータ
+DMUX_out = [1, 0, 0]  #出力ピン指定のHIGH,LOWデータ
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(DMUX_pin[0], GPIO.OUT)
@@ -48,6 +49,26 @@ correction = 0.825 #MPU補正値
 angle_range = math.radians(10) #目標角度との許容誤差
 spin_angle = math.radians(30)#回転を始める角度
 
+class servo:
+    def __init__(self, pin):
+        self.pin = pin
+        GPIO.setup(self.pin, GPIO.OUT)
+        self.srv = GPIO.PWM(self.pin, 50)
+        self.srv.start(7.5)
+
+    def __enter__(self):
+        return self
+
+    def rotate(self, duty):
+        self.srv.ChangeDutyCycle(duty)
+
+    def __del__(self):
+        self.srv.stop()
+        GPIO.cleanup(self.pin)
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        pass
+
 #位置座標を保存
 #回転角度
 def cal_rotation_angle(preT,p_g):
@@ -64,7 +85,7 @@ while pre[0] is None:
     pre = GPS.lat_long_measurement()
 
 try:
-    with servo.servo(pinL) as svL, servo.servo(pinR) as svR:
+    with servo(pinL) as svL, servo(pinR) as svR:
         svL.rotate(dutyL)
         svR.rotate(dutyR)
         MPU = MPU6050.MPU6050(0x68)
@@ -83,8 +104,6 @@ try:
                     preT = time.time()
                     pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2])
                     flag = 1
-                    to_goal[1] = 0
-                    rotation_angle = 90
                     print(pre)
                     print(now,to_goal)
                 pre = now
