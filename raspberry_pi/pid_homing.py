@@ -63,54 +63,54 @@ while pre[0] is None:
 
 pt = time.time()
 try:
-    with servo(pinL) as svL, servo(pinR) as svR:
-        svL.rotate(neutralL)
+    with servo(pinR) as svR:
         svR.rotate(7.6)
         time.sleep(4)
         svR.rotate(6.9)
         time.sleep(0.2)
-        svR.rotate(neutralR)
         DMUX_out = [0,0,0]
         GPIO.output(DMUX_pin[0], DMUX_out[0])
         GPIO.output(DMUX_pin[1], DMUX_out[1])
         GPIO.output(DMUX_pin[2], DMUX_out[2])
+        svR.rotate(neutralR)
         MPU = MPU6050.MPU6050(0x68)
         to_goal , rotation = [1,-90] , 0
         count = 0
         #goalとの距離が10m以下になったら画像での誘導
-        while True:
-            """
-            now = [None, None]
-            now = GPS.lat_long_measurement()
-            if now[0] != None and now[1] != None:
-                to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
-                count += 1
-                if count == 30:
-                    to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
-                    rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1])
-                    print("count!!!")
-                    pre[1] = now[1]
-                    count = 0
-                pre[0] = now[0]
-                if to_goal[0] < cam_dis:
-                    svR.rotate(neutralR)
-                    svL.rotate(neutralL)
-                    break
-            """
-            #dutyLを変える
-            gyro = MPU.get_gyro_data_lsb()[2] + drift
-            nt = time.time()
-            dt = nt - pt
-            pt = nt
-            rotation += gyro * dt
-            m = p.update_pid(to_goal[1] , rotation, dt)
-            m1 = min([max([m, -1]), 1])
+        with servo(pinL) as svL:
+            while True:
+                """
+                now = [None, None]
+                now = GPS.lat_long_measurement()
+                if now[0] != None and now[1] != None:
+                    to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
+                    count += 1
+                    if count == 30:
+                        to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
+                        rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1])
+                        print("count!!!")
+                        pre[1] = now[1]
+                        count = 0
+                    pre[0] = now[0]
+                    if to_goal[0] < cam_dis:
+                        svR.rotate(neutralR)
+                        svL.rotate(neutralL)
+                        break
+                """
+                #dutyLを変える
+                gyro = MPU.get_gyro_data_lsb()[2] + drift
+                nt = time.time()
+                dt = nt - pt
+                pt = nt
+                rotation += gyro * dt
+                m = p.update_pid(to_goal[1] , rotation, dt)
+                m1 = min([max([m, -1]), 1])
 
-            dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
-            svL.rotate(dL)
-            svR.rotate(dR)
-            print([m, dL, dR, rotation])
-            time.sleep(0.01)
+                dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
+                svL.rotate(dL)
+                svR.rotate(dR)
+                print([m, dL, dR, rotation])
+                time.sleep(0.01)
 finally:
     GPIO.cleanup()
     svL = None
