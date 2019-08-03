@@ -64,6 +64,7 @@ while pre[0] is None:
 pt = time.time()
 try:
     with servo(pinL) as svL, servo(pinR) as svR:
+        svL.rotate(neutralL)
         svR.rotate(7.6)
         time.sleep(4)
         svR.rotate(6.9)
