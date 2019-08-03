@@ -28,7 +28,9 @@ dutyR = neutralR - 1.5
 pinL = 13
 pinR = 18
 #PID
-p = pid_controll.pid(0.004, 0.02365, 0.0002436)
+
+p = pid_controll.pid(0.003, 0.03365, 0.0002436)
+#p = pid_controll.pid(0.004, 0.02365, 0.0002436)
 
 #goalの座標
 goal_lat = 35.554506
