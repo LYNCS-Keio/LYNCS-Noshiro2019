@@ -86,8 +86,8 @@ try:
             if now[0] != None and now[1] != None:
                 to_goal[0] =  GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
                 if flag == 0:
-                    to_goal[1] =  -GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1]
-                    rotation = -GPS.convert_lat_long_to_r_theta(pre[0],pre[1],now[0],now[1])[1]
+                    to_goal[1] =GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1]
+                    rotation =GPS.convert_lat_long_to_r_theta(pre[0],pre[1],now[0],now[1])[1]
                     flag = 1
                 pre = now
                 if to_goal[0] < cam_dis:
@@ -101,7 +101,7 @@ try:
             dt = nt - pt
             pt = nt
             rotation += gyro * dt
-            m = p.update_pid(to_goal[1] - rotation, rotation, dt)
+            m = p.update_pid(to_goal[1] + rotation, rotation, dt)
             m1 = min([max([m, -1]), 1])
 
             dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
