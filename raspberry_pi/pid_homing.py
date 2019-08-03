@@ -105,8 +105,8 @@ try:
             m1 = min([max([m, -1]), 1])
 
             dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
-            svL.ChangeDutyCycle(dL)
-            svR.ChangeDutyCycle(dR)
+            svL.rotate(dL)
+            svR.rotate(dR)
             print([m, dL, dR, rotation])
             time.sleep(0.01)
 finally:
