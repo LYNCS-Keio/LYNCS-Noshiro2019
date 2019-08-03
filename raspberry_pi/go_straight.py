@@ -7,7 +7,7 @@ import time
 
 
 rotation = 0
-drift = 0.825
+drift = 0.91031267
 
 gpio.setmode(gpio.BCM)
 gpio.setwarnings(False)
@@ -30,7 +30,7 @@ def rotate(self, duty):
 
 try:
     while True:
-        gyro = mpu.get_gyro_data_lsb()[2] -drift
+        gyro = mpu.get_gyro_data_lsb()[2] + drift
         nt = time.time()
         dt = nt - pt
         pt = nt
