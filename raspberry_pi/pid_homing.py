@@ -68,7 +68,7 @@ try:
         to_goal , rotation = [1,0] , 0
         count = 0
         #goalとの距離が10m以下になったら画像での誘導
-        while 1:
+        while True:
             now = [None, None]
             now = GPS.lat_long_measurement()
             if now[0] != None and now[1] != None:
@@ -76,8 +76,9 @@ try:
                 count += 1
                 if count == 10:
                     to_goal[1] =GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1]
-                    rotation =GPS.convert_lat_long_to_r_theta(pre[0],pre[1],now[0],now[1])[1]
-                pre = now
+                    rotation = GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1]
+                    pre[1] = now[1]
+                pre[0] = now[0]
                 if to_goal[0] < cam_dis:
                     svR.rotate(neutralR)
                     svL.rotate(neutralL)
