@@ -88,8 +88,6 @@ try:
                 if flag == 0:
                     to_goal[1] =  GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1]
                     rotation = GPS.convert_lat_long_to_r_theta(pre[0],pre[1],now[0],now[1])[1]
-                    preT = time.time()
-                    pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2] + correction)
                     flag = 1
                 pre = now
                 if to_goal[0] < cam_dis:
