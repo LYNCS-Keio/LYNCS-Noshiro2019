@@ -89,7 +89,7 @@ try:
             dt = nt - pt
             pt = nt
             rotation += gyro * dt
-            m = p.update_pid(to_goal[1] + rotation, rotation, dt)
+            m = p.update_pid(to_goal[1] , rotation, dt)
             m1 = min([max([m, -1]), 1])
 
             dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
