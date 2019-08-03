@@ -39,8 +39,8 @@ Ki = 1.8
 Kd = 0.003
 
 #goalの座標
-goal_lat = 35.555437
-goal_long = 139.655772
+goal_lat = 35.554506
+goal_long = 139.656850
 
 correction = 0.91031267 #MPU補正値
 
@@ -86,7 +86,6 @@ try:
         MPU = MPU6050.MPU6050(0x68)
         time.sleep(10)
         to_goal , rotation_angle = [1,0] , 0
-        flag = 0
         #goalとの距離が10m以下になったら画像での誘導
         while 1:
             now = [None, None]
@@ -101,22 +100,20 @@ try:
                     to_goal[1] = 0
                     rotation_angle = math.radians(90)
                 pre = now
-                flag = 1
                 if to_goal[0] < cam_dis:
                     svR.rotate(neutralR)
                     svL.rotate(neutralL)
                     break
 
-            if flag == 1:
-                preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
-                rotation_angle += now_rotation_angle
-                while 1:
-                    if rotation_angle > math.pi:
-                        rotation_angle -= 2*math.pi
-                    elif rotation_angle < -math.pi:
-                        rotation_angle += 2*math.pi
-                    else:
-                        break
+            preT, pre_gyro, now_rotation_angle = cal_rotation_angle(preT, pre_gyro)
+            rotation_angle += now_rotation_angle
+            while 1:
+                if rotation_angle > math.pi:
+                    rotation_angle -= 2*math.pi
+                elif rotation_angle < -math.pi:
+                    rotation_angle += 2*math.pi
+                else:
+                    break
 
             #dutyLを変える
             e = to_goal[1] - rotation_angle
