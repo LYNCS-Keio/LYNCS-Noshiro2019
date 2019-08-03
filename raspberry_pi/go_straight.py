@@ -39,7 +39,7 @@ try:
 
         m1 = min([max([m, -1]), 1])
 
-        dR, dL = 7.5 + 1.25 * (1 + m1), 7.5 - 1.25 * (1 - m1)
+        dR, dL = 7.5 + 1.25 * (1 - m1), 7.5 - 1.25 * (1 + m1)
         svL.ChangeDutyCycle(dL)
         svR.ChangeDutyCycle(dR)
         print([m, dL, dR, rotation])
