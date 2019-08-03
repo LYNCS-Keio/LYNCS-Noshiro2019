@@ -56,16 +56,6 @@ class servo:
         pass
 
 
-#位置座標を保存
-#回転角度
-def cal_rotation_angle(preT,p_g):
-    nowT = time.time() #現在時刻
-    now_gyro = math.radians(MPU.get_gyro_data_lsb()[2]  + drift)#現在の角速度
-
-    #積分して回転角度を求める
-    now_rotation_angle = (now_gyro + p_g) * (nowT - preT) / 2
-    return [nowT, now_gyro, now_rotation_angle]
-
 #着地
 pre=[None,None]
 while pre[0] is None:
@@ -74,8 +64,6 @@ while pre[0] is None:
 pt = time.time()
 try:
     with servo(pinL) as svL, servo(pinR) as svR:
-        svL.rotate(dutyL)
-        svR.rotate(dutyR)
         MPU = MPU6050.MPU6050(0x68)
         to_goal , rotation = [1,0] , 0
         flag = 0
