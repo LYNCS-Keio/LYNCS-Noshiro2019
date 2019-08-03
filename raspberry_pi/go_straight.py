@@ -16,8 +16,8 @@ gpio.output(11, False)
 gpio.output(9, False)
 gpio.output(10, False)
 svL, svR = gpio.PWM(13, 50), gpio.PWM(18, 50)
-svL.start(7.5)
-svR.start(7.5)
+svL.start(6.9)
+svR.start(6.9)
 
 mpu = MPU6050.MPU6050(0x68)
 p = pid_controll.pid(0.004, 0.02365, 0.0002436)
@@ -40,7 +40,7 @@ try:
 
         m1 = min([max([m, -1]), 1])
 
-        dL, dR = 7.5 + 1.25 * (1 - m1), 7.5 - 1.25 * (1 + m1)
+        dL, dR = 6.9 + 1.25 * (1 - m1), 6.9 - 1.25 * (1 + m1)
         svL.ChangeDutyCycle(dL)
         svR.ChangeDutyCycle(dR)
         print([m, dL, dR, rotation])
