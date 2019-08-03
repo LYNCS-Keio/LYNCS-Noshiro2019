@@ -58,7 +58,7 @@ try:
         dL, dR = 6.835 + 1.25 * (1 - m1), 6.86 - 1.25 * (1 + m1)
         svL.ChangeDutyCycle(dL)
         svR.ChangeDutyCycle(dR)
-        print([m, dL, dR, rotation])
+        print([rotation])
         time.sleep(0.01)
 
 finally:
