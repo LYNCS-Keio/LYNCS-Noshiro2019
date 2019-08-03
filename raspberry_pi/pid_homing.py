@@ -77,8 +77,6 @@ try:
         to_goal , rotation = [1,-90] , 0
         count = 0
         #goalとの距離が10m以下になったら画像での誘導
-        Atime = time.time() #後で消してね
-        to_goal[1] = 0 #同上
         while True:
             """
             now = [None, None]
@@ -99,8 +97,6 @@ try:
                     break
             """
             #dutyLを変える
-            if time.time() - Atime >= 3: #あとで消すのです。
-                to_goal[1] = -90
             gyro = MPU.get_gyro_data_lsb()[2] + drift
             nt = time.time()
             dt = nt - pt
