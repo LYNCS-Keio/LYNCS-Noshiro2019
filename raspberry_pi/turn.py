@@ -37,9 +37,10 @@ try:
         dL, dR = 6.835 + 1.25 * (0 - m1), 6.86 - 1.25 * (0 + m1)
         svL.ChangeDutyCycle(dL)
         svR.ChangeDutyCycle(dR)
-        print([m, dL, dR, rotation])
+        print([90 - rotation])
         time.sleep(0.01)
-
+        if 90 - rotation > -5 and 5 > 90 - rotation :
+            break
 finally:
     svL.stop()
     svR.stop()
