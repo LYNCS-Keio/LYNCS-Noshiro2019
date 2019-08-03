@@ -64,6 +64,7 @@ while pre[0] is None:
 pt = time.time()
 try:
     with servo(pinR) as svR:
+        '''
         svR.rotate(7.6)
         time.sleep(4)
         svR.rotate(6.9)
@@ -73,6 +74,7 @@ try:
         GPIO.output(DMUX_pin[1], DMUX_out[1])
         GPIO.output(DMUX_pin[2], DMUX_out[2])
         svR.rotate(neutralR)
+        '''
         MPU = MPU6050.MPU6050(0x68)
         to_goal , rotation = [1,-90] , 0
         count = 0
