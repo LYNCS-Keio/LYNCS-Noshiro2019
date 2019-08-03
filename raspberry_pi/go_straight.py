@@ -20,7 +20,7 @@ svL.start(7.5)
 svR.start(7.5)
 
 mpu = MPU6050.MPU6050(0x68)
-p = pid_controll.pid(0.01, 2, 0.004)
+p = pid_controll.pid(0.01, 1, 0.004)
 pt = time.time()
 
 
@@ -42,7 +42,7 @@ try:
         dL, dR = 7.5 + 1.25 * (1 - m1), 7.5 - 1.25 * (1 + m1)
         svL.ChangeDutyCycle(dL)
         svR.ChangeDutyCycle(dR)
-        print([m, dL, dR])
+        print([m, dL, dR, rotation])
         time.sleep(0.01)
 
 finally:
