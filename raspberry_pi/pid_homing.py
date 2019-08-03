@@ -6,7 +6,7 @@ import math
 import time
 
 DMUX_pin=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
-DMUX_out = [1, 0, 0]  #出力ピン指定のHIGH,LOWデータ
+DMUX_out = [0, 0, 0]  #出力ピン指定のHIGH,LOWデータ
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(DMUX_pin[0], GPIO.OUT)
