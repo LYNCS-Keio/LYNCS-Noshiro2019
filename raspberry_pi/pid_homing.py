@@ -69,11 +69,11 @@ try:
         count = 0
         #goalとの距離が10m以下になったら画像での誘導
         while True:
+            """
             now = [None, None]
             now = GPS.lat_long_measurement()
             if now[0] != None and now[1] != None:
                 to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
-                """
                 count += 1
                 if count == 30:
                     to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
@@ -82,12 +82,11 @@ try:
                     pre[1] = now[1]
                     count = 0
                 pre[0] = now[0]
-                """
                 if to_goal[0] < cam_dis:
                     svR.rotate(neutralR)
                     svL.rotate(neutralL)
                     break
-
+            """
             #dutyLを変える
             gyro = MPU.get_gyro_data_lsb()[2] + drift
             nt = time.time()
