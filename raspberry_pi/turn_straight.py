@@ -44,7 +44,7 @@ try:
         if 90 - rotation > -1 and 1 > 90 - rotation :
             break
 
-
+    rotation = 90 - rotation
     while True:
         gyro = mpu.get_gyro_data_lsb()[2] + drift
         nt = time.time()
