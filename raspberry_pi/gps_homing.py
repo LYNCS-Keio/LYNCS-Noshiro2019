@@ -102,7 +102,7 @@ try:
                     to_goal[1] =  GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1]
                     rotation_angle = GPS.convert_lat_long_to_r_theta(pre[0],pre[1],now[0],now[1])[1]
                     preT = time.time()
-                    pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2])
+                    pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2] + correction)
                     flag = 1
                     to_goal[1] = 0
                     rotation_angle = 90

@@ -42,7 +42,7 @@ Kd = 0.003
 goal_lat = 35.555437
 goal_long = 139.655772
 
-correction = 0.825 #MPU補正値
+correction = 0.91031267 #MPU補正値
 
 class servo:
     def __init__(self, pin):
@@ -68,7 +68,7 @@ class servo:
 #回転角度
 def cal_rotation_angle(preT,p_g):
     nowT = time.time() #現在時刻
-    now_gyro = math.radians(MPU.get_gyro_data_lsb()[2]  - correction)#現在の角速度
+    now_gyro = math.radians(MPU.get_gyro_data_lsb()[2]  + correction)#現在の角速度
 
     #積分して回転角度を求める
     now_rotation_angle = (now_gyro + p_g) * (nowT - preT) / 2
@@ -97,7 +97,7 @@ try:
                     to_goal[1] =  GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1]
                     rotation_angle = GPS.convert_lat_long_to_r_theta(pre[0],pre[1],now[0],now[1])[1]
                     preT = time.time()
-                    pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2])
+                    pre_gyro = math.radians(MPU.get_gyro_data_lsb()[2] + correction)
                     to_goal[1] = 0
                     rotation_angle = math.radians(90)
                 pre = now
