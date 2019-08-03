@@ -64,9 +64,11 @@ while pre[0] is None:
 pt = time.time()
 try:
     with servo(pinL) as svL, servo(pinR) as svR:
-        svR.rotate(8.5)
-        time.sleep(1)
         svR.rotate(7.6)
+        time.sleep(4)
+        svR.rotate(6.9)
+        time.sleep(0.2)
+        svR.rotate(neutralR)
         DMUX_out = [0,0,0]
         GPIO.output(DMUX_pin[0], DMUX_out[0])
         GPIO.output(DMUX_pin[1], DMUX_out[1])
