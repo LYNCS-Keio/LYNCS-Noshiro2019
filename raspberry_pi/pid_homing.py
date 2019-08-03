@@ -66,17 +66,17 @@ try:
     with servo(pinL) as svL, servo(pinR) as svR:
         MPU = MPU6050.MPU6050(0x68)
         to_goal , rotation = [1,0] , 0
-        flag = 0
+        count = 0
         #goalとの距離が10m以下になったら画像での誘導
         while 1:
             now = [None, None]
             now = GPS.lat_long_measurement()
             if now[0] != None and now[1] != None:
                 to_goal[0] =  GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
-                if flag == 0:
+                count += 1
+                if count == 10:
                     to_goal[1] =GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1]
                     rotation =GPS.convert_lat_long_to_r_theta(pre[0],pre[1],now[0],now[1])[1]
-                    flag = 1
                 pre = now
                 if to_goal[0] < cam_dis:
                     svR.rotate(neutralR)
