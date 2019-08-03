@@ -34,7 +34,7 @@ p = pid_controll.pid(0.004, 0.02365, 0.0002436)
 goal_lat = 35.554506
 goal_long = 139.656850
 
-correction = 0.91031267 #MPU補正値
+drift = 0.91031267 #MPU補正値
 
 class servo:
     def __init__(self, pin):
@@ -60,7 +60,7 @@ class servo:
 #回転角度
 def cal_rotation_angle(preT,p_g):
     nowT = time.time() #現在時刻
-    now_gyro = math.radians(MPU.get_gyro_data_lsb()[2]  + correction)#現在の角速度
+    now_gyro = math.radians(MPU.get_gyro_data_lsb()[2]  + drift)#現在の角速度
 
     #積分して回転角度を求める
     now_rotation_angle = (now_gyro + p_g) * (nowT - preT) / 2
