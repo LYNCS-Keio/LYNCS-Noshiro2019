@@ -77,7 +77,6 @@ try:
         svL.rotate(dutyL)
         svR.rotate(dutyR)
         MPU = MPU6050.MPU6050(0x68)
-        time.sleep(10)
         to_goal , rotation = [1,0] , 0
         flag = 0
         #goalとの距離が10m以下になったら画像での誘導
@@ -99,7 +98,7 @@ try:
                     break
 
             #dutyLを変える
-            gyro = mpu.get_gyro_data_lsb()[2] + drift
+            gyro = MPU.get_gyro_data_lsb()[2] + drift
             nt = time.time()
             dt = nt - pt
             pt = nt
@@ -107,7 +106,7 @@ try:
             m = p.update_pid(to_goal[1] - rotation, rotation, dt)
             m1 = min([max([m, -1]), 1])
 
-            dL, dR = 6.835 + 1.25 * (1 - m1), 6.86 - 1.25 * (1 + m1)
+            dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
             svL.ChangeDutyCycle(dL)
             svR.ChangeDutyCycle(dR)
             print([m, dL, dR, rotation])
