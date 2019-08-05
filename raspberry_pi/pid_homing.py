@@ -26,7 +26,7 @@ dutyL = neutralL + 1.5
 neutralR = 6.86
 dutyR = neutralR - 1.5
 pinL = 13
-pinR = 18
+pinR = 12
 #PID
 
 #p = pid_controll.pid(0.003, 0.03365, 0.0002436)
