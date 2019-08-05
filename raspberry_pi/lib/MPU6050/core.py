@@ -81,7 +81,7 @@ class MPU6050():
     # theta : horizon - x_axis
     # psi : horizon - y_axis
     # phi : perpendicular - z_axis
-    # 
+    #
 
     def slope_accel(self, x, y, z):   #radian
         self.theta = math.atan(x / (y*y + z*z)**0.5)
@@ -99,5 +99,5 @@ if __name__ == '__main__':
         accel_x, accel_y, accel_z = mpu.get_accel_data_lsb()
         slope_theta, slope_psi, slope_phi = mpu.slope_accel(accel_x, accel_y, accel_z)
 
-        print accel_z
+        print (accel_z)
         time.sleep(0.1)
