@@ -77,7 +77,7 @@ def gps_get():
                 svL.rotate(neutralL)
                 break
 
-def gyro_get(to_goal, rotation):
+def gyro_get():
     global to_goal , rotation
     while 1:
         #dutyLを変える
