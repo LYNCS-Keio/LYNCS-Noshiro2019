@@ -8,7 +8,7 @@ import time
 import threading
 
 DMUX_pin=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
-DMUX_out = [0, 0, 0]  #出力ピン指定のHIGH,LOWデータ
+DMUX_out = [1, 0, 0]  #出力ピン指定のHIGH,LOWデータ
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(DMUX_pin[0], GPIO.OUT)
@@ -23,9 +23,7 @@ GPIO.output(DMUX_pin[2], DMUX_out[2])
 cam_dis = 0.01
 
 neutralL = 6.835
-dutyL = neutralL + 1.5
 neutralR = 6.86
-dutyR = neutralR - 1.5
 pinL = 13
 pinR = 12
 #PID
@@ -95,7 +93,7 @@ def gyro_get(to_goal, rotation):
         dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
         svL.rotate(dL)
         svR.rotate(dR)
-        print([m, rotation, goal[1] - rotation)
+        print([m, rotation, goal[1] - rotation])
         time.sleep(0.01)
 
         if to_goal[0] < cam_dis:
@@ -112,7 +110,6 @@ while pre[0] is None:
 pt = time.time()
 try:
     with servo(pinR) as svR:
-        '''
         svR.rotate(7.6)
         time.sleep(4)
         svR.rotate(6.9)
@@ -122,16 +119,15 @@ try:
         GPIO.output(DMUX_pin[1], DMUX_out[1])
         GPIO.output(DMUX_pin[2], DMUX_out[2])
         svR.rotate(neutralR)
-        '''
         MPU = MPU6050.MPU6050(0x68)
         to_goal , rotation = [1, 0] , 0
         #goalとの距離が10m以下になったら画像での誘導
-    with servo(pinL) as svL:
-            lock=threading.Lock()
-            t1 = threading.Thread(target = gps_get)
-            t2 = threading.Thread(target = gyro_get)
-            t1.start()
-            t2.start()
+        with servo(pinL) as svL:
+                lock=threading.Lock()
+                t1 = threading.Thread(target = gps_get)
+                t2 = threading.Thread(target = gyro_get)
+                t1.start()
+                t2.start()
 
 finally:
     GPIO.cleanup()
