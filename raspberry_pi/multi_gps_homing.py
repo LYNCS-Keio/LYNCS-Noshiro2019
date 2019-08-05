@@ -61,21 +61,21 @@ def gps_get():
     count = 0
     while 1:
         now = GPS.lat_long_measurement()
-            if now[0] != None and now[1] != None:
-                lock.acquire()
-                to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
-                count += 1
-                if count == 30:
-                    to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
-                    rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1])
-                    print("count!!!")
-                    pre = now
-                    #count = 0
-                lock.release()
-                if to_goal[0] < cam_dis:
-                    svR.rotate(neutralR)
-                    svL.rotate(neutralL)
-                    break
+        if now[0] != None and now[1] != None:
+            lock.acquire()
+            to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
+            count += 1
+            if count == 30:
+                to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
+                rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1])
+                print("count!!!")
+                pre = now
+                #count = 0
+            lock.release()
+            if to_goal[0] < cam_dis:
+                svR.rotate(neutralR)
+                svL.rotate(neutralL)
+                break
 
 def gyro_get(to_goal, rotation):
     global to_goal , rotation
