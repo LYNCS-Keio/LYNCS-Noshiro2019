@@ -1,24 +1,53 @@
 # -*- coding: utf-8 -*-
 from lib import camera
-from lib import servo
 from lib import capture
+from lib import MPU6050
+import RPi.GPIO as GPIO
+import time
 
-pinL, pinR = 13, 18
+pinL, pinR = 13, 12
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+AoV = 54  # angle of view
+height = 480
+width = 640
+
+
+class servo:
+    def __init__(self, pin):
+        self.pin = pin
+        GPIO.setup(self.pin, GPIO.OUT)
+        self.srv = GPIO.PWM(self.pin, 50)
+        self.srv.start(7.5)
+
+    def __enter__(self):
+        return self
+
+    def rotate(self, duty):
+        self.srv.ChangeDutyCycle(duty)
+
+    def __del__(self):
+        self.srv.stop()
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        pass
+
 
 try:
-    svl, svr = servo.servo(pinL), servo.servo(pinR)
+    svL, svR = servo(pinL), servo(pinR)
     cap = capture.capture()
-    cam_analy = camera.CamAnalysis()
+    cam = camera.CamAnalysis()
     while True:
-        cam_analy.morphology_extract(cap.cap())
-        x,y = cam_analy.contour_find()
-        if (x != -1)and(y != -1):
-            pass
-        else:
-            pass
+        stream = cap.cap()
+        cam.morphology_extract(stream)
+        coord = cam.contour_find()
+        azimuth = AoV/2 - (54/width)*coord[0]
+
 
 except:
     pass
 
 finally:
-    del svl, svr, cap
+    del svL, svR, cap
+    GPIO.cleanup()
