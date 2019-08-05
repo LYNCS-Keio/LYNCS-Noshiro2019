@@ -84,7 +84,7 @@ try:
         #goalとの距離が10m以下になったら画像での誘導
         with servo(pinL) as svL:
             while True:
-                if count < 31:
+                if count <= 30:
                     now = GPS.lat_long_measurement()
                     if now[0] != None and now[1] != None:
                         to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
@@ -94,7 +94,6 @@ try:
                             rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre_30[0], pre_30[1], now[0], now[1])[1])
                             print("count!!!")
                             pre[1] = now[1]
-                            count = 0
                             pre_30 = now
                         pre = now
                         if to_goal[0] < cam_dis:
