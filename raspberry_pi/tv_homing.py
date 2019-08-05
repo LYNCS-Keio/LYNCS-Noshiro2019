@@ -2,23 +2,28 @@
 from lib import camera
 from lib import capture
 from lib import MPU6050
-import RPi.GPIO as GPIO
+import RPi.GPIO as gpio
 import time
+import threading
 
 pinL, pinR = 13, 12
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
+gpio.setmode(gpio.BCM)
+gpio.setwarnings(False)
 AoV = 54  # angle of view
 height = 480
 width = 640
+rotation = 0
+drift = 1.092913
+cam_interval = 1
+rotation_lock = threading.Lock()
 
 
 class servo:
     def __init__(self, pin):
         self.pin = pin
-        GPIO.setup(self.pin, GPIO.OUT)
-        self.srv = GPIO.PWM(self.pin, 50)
+        gpio.setup(self.pin, gpio.OUT)
+        self.srv = gpio.PWM(self.pin, 50)
         self.srv.start(7.5)
 
     def __enter__(self):
@@ -34,15 +39,34 @@ class servo:
         pass
 
 
+def update_rotation_with_gyro():
+    global rotation, nt, pt
+    while True:
+        gyro = mpu.get_gyro_data_lsb()[2] + drift
+        nt = time.time()
+        dt = nt - pt
+        pt = nt
+        rotation_lock.acquire()
+        rotation += gyro * dt
+        rotation_lock.release()
+
+
+def update_rotation_with_cam():
+    UAwC_thread = threading.Timer(cam_interval, update_rotation_with_cam)
+    UAwC_thread.start()
+    global rotation
+
+
+
+pt = time.time()
 try:
     svL, svR = servo(pinL), servo(pinR)
     cap = capture.capture()
     cam = camera.CamAnalysis()
-    while True:
-        stream = cap.cap()
-        cam.morphology_extract(stream)
-        coord = cam.contour_find()
-        azimuth = AoV/2 - (54/width)*coord[0]
+    mpu = MPU6050.MPU6050(0x68)
+
+    URwG_thread = threading.Thread(target=update_rotation_with_gyro)
+    URwG_thread.start()
 
 
 except:
@@ -50,4 +74,4 @@ except:
 
 finally:
     del svL, svR, cap
-    GPIO.cleanup()
+    gpio.cleanup()
