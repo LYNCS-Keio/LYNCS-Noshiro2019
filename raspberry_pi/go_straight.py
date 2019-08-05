@@ -11,11 +11,11 @@ drift = 1.092913
 
 gpio.setmode(gpio.BCM)
 gpio.setwarnings(False)
-gpio.setup([11, 9, 10, 13, 18], gpio.OUT)
+gpio.setup([11, 9, 10, 13, 12], gpio.OUT)
 gpio.output(11, False)
 gpio.output(9, False)
 gpio.output(10, False)
-svL, svR = gpio.PWM(13, 50), gpio.PWM(18, 50)
+svL, svR = gpio.PWM(13, 50), gpio.PWM(12, 50)
 svL.start(6.9)
 svR.start(6.9)
 
