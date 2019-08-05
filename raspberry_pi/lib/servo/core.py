@@ -11,7 +11,6 @@ dutyCycle       5    -   7.5   -    10
 rotation    backward - nuetral - forward
 """
 import RPi.GPIO as GPIO
-import time
 import sys
 
 __all__ = ['servo']
@@ -30,14 +29,15 @@ class servo:
     def rotate(self, duty):
         self.srv.ChangeDutyCycle(duty)
 
-    def __exit__(self, exception_type, exception_value, traceback):
+    def __del__(self):
         self.srv.stop()
         GPIO.cleanup(self.pin)
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        pass
 
 if __name__ == "__main__":
     args = sys.argv
     with servo(int(args[1])) as sv:
-        sv.rotate(5)
-        time.sleep(1)
-        sv.rotate(10)
-        time.sleep(1)
+        while True:
+            sv.rotate(float(args[2]))
