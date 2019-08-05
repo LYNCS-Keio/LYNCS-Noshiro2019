@@ -113,7 +113,7 @@ try:
                 dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
                 svL.rotate(dL)
                 svR.rotate(dR)
-                print([m, dL, dR, rotation])
+                print([m, dL, dR, rotation, to_goal[1] - rotation)
                 time.sleep(0.01)
 finally:
     GPIO.cleanup()
