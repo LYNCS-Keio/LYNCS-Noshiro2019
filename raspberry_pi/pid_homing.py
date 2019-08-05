@@ -62,6 +62,7 @@ class servo:
 pre=[None,None]
 while pre[0] is None:
     pre = GPS.lat_long_measurement()
+pre_30 = pre
 
 pt = time.time()
 try:
@@ -91,11 +92,12 @@ try:
                     count += 1
                     if count == 30:
                         to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
-                        rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1])
+                        rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre_30[0], pre_30[1], now[0], now[1])[1])
                         print("count!!!")
                         pre[1] = now[1]
                         count = 0
-                    pre[0] = now[0]
+                        pre_30 = now
+                    pre = now
                     if to_goal[0] < cam_dis:
                         svR.rotate(neutralR)
                         svL.rotate(neutralL)
