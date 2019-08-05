@@ -79,30 +79,28 @@ try:
         svR.rotate(neutralR)
         '''
         MPU = MPU6050.MPU6050(0x68)
-        to_goal , rotation = [1,-90] , 0
+        to_goal , rotation = [1,0] , 0
         count = 0
         #goalとの距離が10m以下になったら画像での誘導
         with servo(pinL) as svL:
             while True:
-                """
-                now = [None, None]
-                now = GPS.lat_long_measurement()
-                if now[0] != None and now[1] != None:
-                    to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
-                    count += 1
-                    if count == 30:
-                        to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
-                        rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre_30[0], pre_30[1], now[0], now[1])[1])
-                        print("count!!!")
-                        pre[1] = now[1]
-                        count = 0
-                        pre_30 = now
-                    pre = now
-                    if to_goal[0] < cam_dis:
-                        svR.rotate(neutralR)
-                        svL.rotate(neutralL)
-                        break
-                """
+                if count < 31:
+                    now = GPS.lat_long_measurement()
+                    if now[0] != None and now[1] != None:
+                        to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
+                        count += 1
+                        if count == 30:
+                            to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
+                            rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre_30[0], pre_30[1], now[0], now[1])[1])
+                            print("count!!!")
+                            pre[1] = now[1]
+                            count = 0
+                            pre_30 = now
+                        pre = now
+                        if to_goal[0] < cam_dis:
+                            svR.rotate(neutralR)
+                            svL.rotate(neutralL)
+                            break
                 #dutyLを変える
                 gyro = MPU.get_gyro_data_lsb()[2] + drift
                 nt = time.time()
