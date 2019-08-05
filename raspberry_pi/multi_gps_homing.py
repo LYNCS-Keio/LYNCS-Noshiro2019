@@ -5,6 +5,7 @@ from lib import pid_controll
 import RPi.GPIO as GPIO
 import math
 import time
+import threading
 
 DMUX_pin=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
 DMUX_out = [0, 0, 0]  #出力ピン指定のHIGH,LOWデータ
@@ -56,50 +57,52 @@ class servo:
 
     def __exit__(self, exception_type, exception_value, traceback):
         pass
-    
-def GPS():
-    while 1:
-        now = [None, None]
-        now = GPS.lat_long_measurement()
-            if now[0] != None and now[1] != None:
-                to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
-                count += 1
 
-                if count == 30:
-                    to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
-                    rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre_30[0], pre_30[1], now[0], now[1])[1])
-                    print("count!!!")
-                    pre = now
-                    #count = 0
-                    pre_30 = now
-                    return to_goal, rotation
+class GPS:
+    def GPS():
+        while 1:
+            now = [None, None]
+            now = GPS.lat_long_measurement()
+                if now[0] != None and now[1] != None:
+                    to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
+                    count += 1
 
-                if to_goal[0] < cam_dis:
-                    svR.rotate(neutralR)
-                    svL.rotate(neutralL)
-                    break
+                    if count == 30:
+                        to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
+                        rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre_30[0], pre_30[1], now[0], now[1])[1])
+                        print("count!!!")
+                        pre = now
+                        #count = 0
+                        pre_30 = now
+                        return to_goal, rotation
 
-def gyro(to_goal, rotation):
-    while 1:
-        #dutyLを変える
-        gyro = MPU.get_gyro_data_lsb()[2] + drift
-        nt = time.time()
-        dt = nt - pt
-        pt = nt
-        rotation += gyro * dt
-        m = p.update_pid(to_goal[1] , rotation, dt)
-        m1 = min([max([m, -1]), 1])
+                    if to_goal[0] < cam_dis:
+                        svR.rotate(neutralR)
+                        svL.rotate(neutralL)
+                        break
 
-        dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
-        svL.rotate(dL)
-        svR.rotate(dR)
-        print([m, dL, dR, rotation])
-        time.sleep(0.01)
+class gyro:
+    def gyro(to_goal, rotation):
+        while 1:
+            #dutyLを変える
+            gyro = MPU.get_gyro_data_lsb()[2] + drift
+            nt = time.time()
+            dt = nt - pt
+            pt = nt
+            rotation += gyro * dt
+            m = p.update_pid(to_goal[1] , rotation, dt)
+            m1 = min([max([m, -1]), 1])
 
-        if to_goal[0] < cam_dis:
-            svR.rotate(neutralR)
-            svL.rotate(neutralL)
-            break
+            dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
+            svL.rotate(dL)
+            svR.rotate(dR)
+            print([m, dL, dR, rotation])
+            time.sleep(0.01)
+
+            if to_goal[0] < cam_dis:
+                svR.rotate(neutralR)
+                svL.rotate(neutralL)
+                break
 
 
 #着地
