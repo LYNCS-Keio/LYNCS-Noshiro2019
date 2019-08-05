@@ -7,7 +7,7 @@ import time
 
 
 rotation = 0
-drift = 0.91031267
+drift = 1.092913
 
 gpio.setmode(gpio.BCM)
 gpio.setwarnings(False)
@@ -50,5 +50,3 @@ finally:
     svL.stop()
     svR.stop()
     gpio.cleanup()
-        
-
