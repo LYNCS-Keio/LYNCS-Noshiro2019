@@ -73,12 +73,10 @@ def gps_get():
                 #count = 0
             lock.release()
             if to_goal[0] < cam_dis:
-                svR.rotate(neutralR)
-                svL.rotate(neutralL)
                 break
 
 def gyro_get():
-    global to_goal , rotation
+    global to_goal , rotation ,dL, dR
     pt = time.time()
     while 1:
         #dutyLを変える
@@ -92,14 +90,10 @@ def gyro_get():
         m = p.update_pid(to_goal[1] , rotation, dt)
         m1 = min([max([m, -1]), 1])
         dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
-        svL.rotate(dL)
-        svR.rotate(dR)
         print([m, rotation, to_goal[1] - rotation])
         time.sleep(0.01)
 
         if to_goal[0] < cam_dis:
-            svR.rotate(neutralR)
-            svL.rotate(neutralL)
             break
 
 
@@ -121,12 +115,20 @@ try:
         svR.rotate(neutralR)
         MPU = MPU6050.MPU6050(0x68)
         to_goal , rotation = [1, 0] , 0
+        dL, dR = neutralL + 1.5, neutralR - 1.5
         with servo(pinL) as svL:
                 lock=threading.Lock()
                 t1 = threading.Thread(target = gps_get)
                 t2 = threading.Thread(target = gyro_get)
                 t1.start()
                 t2.start()
+                while 1:
+                    svL.rotate(dL)
+                    svR.rotate(dR)
+                    if to_goal[0] < cam_dis:
+                        svR.rotate(neutralR)
+                        svL.rotate(neutralL)
+                        break
 
 finally:
     GPIO.cleanup()
