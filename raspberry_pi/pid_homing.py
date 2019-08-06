@@ -21,10 +21,8 @@ GPIO.output(DMUX_pin[2], DMUX_out[2])
 #画像誘導に切り替える距離(km)
 cam_dis = 0
 
-neutralL = 6.835
-dutyL = neutralL + 1.5
-neutralR = 6.86
-dutyR = neutralR - 1.5
+neutralL = 6.9
+neutralR = 6.9
 pinL = 13
 pinR = 12
 #PID
@@ -62,7 +60,6 @@ class servo:
 pre=[None,None]
 while pre[0] is None:
     pre = GPS.lat_long_measurement()
-pre_30 = pre
 
 pt = time.time()
 try:
@@ -93,9 +90,7 @@ try:
                             to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
                             rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre_30[0], pre_30[1], now[0], now[1])[1])
                             print("count!!!")
-                            pre[1] = now[1]
-                            pre_30 = now
-                        pre = now
+                            pre = now
                         if to_goal[0] < cam_dis:
                             svR.rotate(neutralR)
                             svL.rotate(neutralL)
@@ -112,7 +107,7 @@ try:
                 dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
                 svL.rotate(dL)
                 svR.rotate(dR)
-                print([m, dL, dR, rotation, to_goal[1] - rotation)
+                print([m, rotation, to_goal[1] - rotation])
                 time.sleep(0.01)
 finally:
     GPIO.cleanup()
