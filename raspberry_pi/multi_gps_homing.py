@@ -79,6 +79,7 @@ def gps_get():
 
 def gyro_get():
     global to_goal , rotation
+    pt = time.time()
     while 1:
         #dutyLを変える
         gyro = MPU.get_gyro_data_lsb()[2] + drift
@@ -107,7 +108,6 @@ pre=[None,None]
 while pre[0] is None:
     pre = GPS.lat_long_measurement()
 
-pt = time.time()
 try:
     with servo(pinR) as svR:
         svR.rotate(7.6)
@@ -121,7 +121,6 @@ try:
         svR.rotate(neutralR)
         MPU = MPU6050.MPU6050(0x68)
         to_goal , rotation = [1, 0] , 0
-        #goalとの距離が10m以下になったら画像での誘導
         with servo(pinL) as svL:
                 lock=threading.Lock()
                 t1 = threading.Thread(target = gps_get)
