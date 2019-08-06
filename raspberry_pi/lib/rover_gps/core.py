@@ -59,10 +59,7 @@ def lat_long_measurement():
     s = serial.Serial('/dev/serial0', 9600, timeout=10)
     while True:
         se = s.readline()
-<<<<<<< HEAD
-=======
         #print(se)
->>>>>>> 67a853aef284c69d38185ff019fb5a3c6dabed5f
         sentence = se.decode(encoding='utf-8', errors='replace')
         if sentence[3:6] == 'GGA' or sentence[3:6] == 'RMC' or sentence[
                 3:6] == 'GLL':
