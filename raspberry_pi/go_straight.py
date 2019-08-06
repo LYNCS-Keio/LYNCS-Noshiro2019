@@ -20,7 +20,7 @@ svL.start(6.9)
 svR.start(6.9)
 
 mpu = MPU6050.MPU6050(0x68)
-p = pid_controll.pid(0.004, 0.03, 0.00025)
+p = pid_controll.pid(0.004, 0.03, 0.0003)
 #p = pid_controll.pid(4.8, 23.65, 0.2436)
 pt = time.time()
 
