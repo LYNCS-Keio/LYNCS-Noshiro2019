@@ -29,7 +29,8 @@ pinR = 12
 #PID
 
 #p = pid_controll.pid(0.003, 0.03365, 0.0002436)
-p = pid_controll.pid(0.004, 0.02365, 0.0002436)
+#p = pid_controll.pid(0.004, 0.02365, 0.0002436)
+p = pid_controll.pid(0.004, 0.03, 0.0002436)
 
 #goalの座標
 #goal_lat, goal_long = 35.554506, 139.656850 #グラウンド
