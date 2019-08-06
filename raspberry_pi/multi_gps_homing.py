@@ -64,6 +64,7 @@ def gps_get():
         if now[0] != None and now[1] != None:
             lock.acquire()
             to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
+            print(to_goal[0])
             count += 1
             if count == 30:
                 to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
