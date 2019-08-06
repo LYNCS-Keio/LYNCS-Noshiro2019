@@ -69,7 +69,7 @@ def gps_get():
             if count == 30:
                 to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
                 rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1])
-                print("count!!!")
+                print("count!!!", now)
                 pre = now
                 #count = 0
             lock.release()
@@ -102,7 +102,7 @@ def gyro_get():
 pre=[None,None]
 while pre[0] is None:
     pre = GPS.lat_long_measurement()
-
+print(pre)
 try:
     with servo(pinR) as svR:
         svR.rotate(7.6)
