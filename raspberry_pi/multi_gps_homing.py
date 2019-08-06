@@ -94,7 +94,7 @@ def gyro_get():
         dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
         svL.rotate(dL)
         svR.rotate(dR)
-        print([m, rotation, goal[1] - rotation])
+        print([m, rotation, to_goal[1] - rotation])
         time.sleep(0.01)
 
         if to_goal[0] < cam_dis:
