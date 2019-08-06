@@ -57,7 +57,7 @@ class servo:
         pass
 
 def gps_get():
-    global to_goal , rotation
+    global to_goal, rotation, pre
     count = 0
     while 1:
         now = GPS.lat_long_measurement()
@@ -76,7 +76,7 @@ def gps_get():
                 break
 
 def gyro_get():
-    global to_goal , rotation ,dL, dR
+    global to_goal, rotation, dL, dR
     pt = time.time()
     while 1:
         #dutyLを変える
