@@ -21,7 +21,8 @@ PWR_MGMT_2 = 0x6c	# PWR_MGMT_2
 
 class MPU6050():
     def __init__(self,device):
-        self.bus = SMBus(1)
+        self.bus = smbus.SMBus(1)
+        time.sleep(0.1)
         self.DEV_ADDR = device
         self.bus.write_byte_data(self.DEV_ADDR, PWR_MGMT_1, 0)
 
@@ -99,4 +100,9 @@ if __name__ == '__main__':
         accel_x, accel_y, accel_z = mpu.get_accel_data_lsb()
         slope_theta, slope_psi, slope_phi = mpu.slope(accel_x, accel_y, accel_z)
 
+<<<<<<< HEAD
         print (str(gyro_x)+','+str(gyro_y)+','+str(gyro_z)+','+str(accel_x)+','+str(accel_y)+','+str(accel_z)+','+str(slope_theta)+','+str(slope_psi)+','+str(slope_phi))
+=======
+        print (accel_z)
+        time.sleep(0.1)
+>>>>>>> 67a853aef284c69d38185ff019fb5a3c6dabed5f
