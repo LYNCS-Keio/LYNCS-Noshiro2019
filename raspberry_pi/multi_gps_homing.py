@@ -37,6 +37,7 @@ p = pid_controll.pid(0.004, 0.03, 0.0002436)
 goal_lat, goal_long = 35.5550, 139.6555 #自販機横
 
 drift = 1.092913 #MPU補正値
+gps_number = 90 #GPSが信頼できるデータ数
 
 class servo:
     def __init__(self, pin):
@@ -57,23 +58,41 @@ class servo:
     def __exit__(self, exception_type, exception_value, traceback):
         pass
 
+def gps_average():
+    count_gps = 0
+    sum = [0, 0]
+    while 1:
+        gps_data = GPS.lat_long_measurement()
+        if gps_data[0] != None:
+            count_gps += 1
+            sum[0] += gps_data[0]
+            sum[1] += gps_data[1]
+        if count_gps == gps_number:
+            sum[0] /= gps_number
+            sum[1] /= gps_number
+            break
+        [lat,long] = sum
+    return [lat, long]
+
 def gps_get():
-    global to_goal, rotation, pre
+    global to_goal, rotation, pre, dL, dR
     count = 0
     while 1:
         now = GPS.lat_long_measurement()
         if now[0] != None and now[1] != None:
-            lock.acquire()
             to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
             print(to_goal[0])
             count += 1
             if count == 90:
+                dR, dL = neutralR, neutralL
+                lock.acquire()
+                now = gps_average()
                 to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
                 rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1])
                 print("count!!!", now)
                 pre = now
+                lock.release()
                 #count = 0
-            lock.release()
             if to_goal[0] < cam_dis:
                 break
 
@@ -88,10 +107,10 @@ def gyro_get():
         pt = nt
         lock.acquire()
         rotation += gyro * dt
-        lock.release()
         m = p.update_pid(to_goal[1] , rotation, dt)
         m1 = min([max([m, -1]), 1])
         dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
+        lock.release()
         print([m, rotation, to_goal[1] - rotation])
         time.sleep(0.01)
 
@@ -100,9 +119,7 @@ def gyro_get():
 
 
 #着地
-pre=[None,None]
-while pre[0] is None:
-    pre = GPS.lat_long_measurement()
+pre = gps_average()
 print(pre)
 try:
     with servo(pinR) as svR:
