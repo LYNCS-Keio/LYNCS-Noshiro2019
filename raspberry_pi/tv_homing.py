@@ -30,12 +30,6 @@ gpio.output(DMUX_pin[0], DMUX_out[0])
 gpio.output(DMUX_pin[1], DMUX_out[1])
 gpio.output(DMUX_pin[2], DMUX_out[2])
 
-p = pid_controll.pid(0.004, 0.03, 0.0002436)
-svL, svR = servo(pinL), servo(pinR)
-cap = capture.capture()
-cam = camera.CamAnalysis()
-mpu = MPU6050.MPU6050(0x68)
-
 
 class servo:
     def __init__(self, pin):
@@ -55,6 +49,13 @@ class servo:
 
     def __exit__(self, exception_type, exception_value, traceback):
         pass
+
+
+p = pid_controll.pid(0.004, 0.03, 0.0002436)
+svL, svR = servo(pinL), servo(pinR)
+cap = capture.capture()
+cam = camera.CamAnalysis()
+mpu = MPU6050.MPU6050(0x68)
 
 
 def update_rotation_with_gyro():
