@@ -30,7 +30,7 @@ GPIO.output(DMUX_pin[0], DMUX_out[0])
 GPIO.output(DMUX_pin[1], DMUX_out[1])
 GPIO.output(DMUX_pin[2], DMUX_out[2])
 
-p = pid_controll.pid(0.004, 0.03, 0.0002436)s
+p = pid_controll.pid(0.004, 0.03, 0.0002436)
 
 
 class servo:
