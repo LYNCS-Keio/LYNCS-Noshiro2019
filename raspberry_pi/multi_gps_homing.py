@@ -119,7 +119,6 @@ try:
         svR.rotate(neutralR)
         MPU = MPU6050.MPU6050(0x68)
         to_goal , rotation = [1, 0] , 0
-        dL, dR = neutralL + 1.5, neutralR - 1.5
         with servo(pinL) as svL:
                 lock=threading.Lock()
                 t1 = threading.Thread(target = gps_get)
