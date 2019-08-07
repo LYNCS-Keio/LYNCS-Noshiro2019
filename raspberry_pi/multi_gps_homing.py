@@ -84,12 +84,13 @@ def gps_get():
             print(to_goal[0])
             count += 1
             if count == 90:
+                print("count!!!")
                 lock.acquire()
                 dR, dL = neutralR, neutralL
                 now = gps_average()
                 to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
                 rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1])
-                print("count!!!", now)
+                print(now)
                 pre = now
                 lock.release()
                 #count = 0
