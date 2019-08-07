@@ -37,7 +37,6 @@ p = pid_controll.pid(0.004, 0.03, 0.0004)
 goal_lat, goal_long = 35.5550, 139.6555 #自販機横
 
 drift = 1.092913 #MPU補正値
-gps_number = 90 #GPSが信頼できるデータ数
 
 class servo:
     def __init__(self, pin):
@@ -58,24 +57,8 @@ class servo:
     def __exit__(self, exception_type, exception_value, traceback):
         pass
 
-def gps_average():
-    count_gps = 0
-    sum = [0, 0]
-    while 1:
-        gps_data = GPS.lat_long_measurement()
-        if gps_data[0] != None:
-            count_gps += 1
-            sum[0] += gps_data[0]
-            sum[1] += gps_data[1]
-        if count_gps == gps_number:
-            sum[0] /= gps_number
-            sum[1] /= gps_number
-            break
-    [lat,long] = sum
-    return [lat, long]
-
 def gps_get():
-    global to_goal, rotation, pre, dL, dR
+    global to_goal, rotation, pre
     count = 0
     while 1:
         now = GPS.lat_long_measurement()
@@ -86,8 +69,6 @@ def gps_get():
             if count == 90:
                 print("count!!!")
                 lock.acquire()
-                dR, dL = neutralR, neutralL
-                now = gps_average()
                 to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
                 rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1])
                 print(now)
@@ -120,7 +101,10 @@ def gyro_get():
 
 
 #着地
-pre = gps_average()
+while 1:
+    pre = GPS.lat_long_measurement()
+    if pre[0] != None:
+        break
 print(pre)
 try:
     with servo(pinR) as svR:
