@@ -87,12 +87,10 @@ def gyro_get():
         nt = time.time()
         dt = nt - pt
         pt = nt
-        lock.acquire()
         rotation += gyro * dt
         m = p.update_pid(to_goal[1] , rotation, dt)
         m1 = min([max([m, -1]), 1])
         dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
-        lock.release()
         print([m, rotation, to_goal[1] - rotation])
         time.sleep(0.01)
 
