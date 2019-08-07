@@ -19,6 +19,7 @@ rotation = 0
 drift = 1.092913
 cam_interval = 1
 rotation_lock = threading.Lock()
+pt = 0
 
 DMUX_pin = [11, 9, 10]  # マルチプレクサの出力指定ピンA,B,C
 DMUX_out = [0, 0, 0]  # 出力ピン指定のHIGH,LOWデータ
@@ -29,6 +30,8 @@ gpio.setup(DMUX_pin[2], gpio.OUT)
 gpio.output(DMUX_pin[0], DMUX_out[0])
 gpio.output(DMUX_pin[1], DMUX_out[1])
 gpio.output(DMUX_pin[2], DMUX_out[2])
+
+pt = time.time()
 
 
 class servo:
@@ -85,7 +88,6 @@ def update_rotation_with_cam():
 
 
 
-pt = time.time()
 try:
     URwG_thread = threading.Thread(target=update_rotation_with_gyro)
     URwC_thread = threading.Thread(target=update_rotation_with_cam)
