@@ -3,7 +3,7 @@ from lib import camera
 from lib import capture
 from lib import MPU6050
 from lib import pid_controll
-import RPi.gpio as gpio
+import RPi.GPIO as gpio
 import math
 import time
 import threading
