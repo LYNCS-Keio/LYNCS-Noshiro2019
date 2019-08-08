@@ -17,7 +17,7 @@ with open(current_dir + '/' + filename + '.csv', 'w') as c:
     f = csv.writer(c, lineterminator='\n')
     with HCSR04.HCSR04(19, 26) as hcs:
         while 1:
-            height_hcs = hcs.readData()
+            height_hcs = hcs.readData(34300)
             height_BME = BME.readData()[0]
             row = [time.time()]
             row.extend(height_hcs)
