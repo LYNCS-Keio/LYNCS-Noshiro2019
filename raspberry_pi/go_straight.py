@@ -7,7 +7,7 @@ import time
 
 
 rotation = 0
-drift = 1.092913
+drift = -1.032555
 
 gpio.setmode(gpio.BCM)
 gpio.setwarnings(False)
