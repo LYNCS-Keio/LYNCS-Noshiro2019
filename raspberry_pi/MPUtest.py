@@ -1,7 +1,7 @@
 from lib import MPU6050
 import time
 rotation_angle = 0
-drift = 1.092913
+drift = -1.092913
 
 def cal_rotation_angle(preT,p_g):
     nowT = time.time()
