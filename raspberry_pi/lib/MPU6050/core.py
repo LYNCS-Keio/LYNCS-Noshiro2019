@@ -99,10 +99,5 @@ if __name__ == '__main__':
         gyro_x, gyro_y, gyro_z = mpu.get_gyro_data_lsb()
         accel_x, accel_y, accel_z = mpu.get_accel_data_lsb()
         slope_theta, slope_psi, slope_phi = mpu.slope(accel_x, accel_y, accel_z)
-
-<<<<<<< HEAD
-        print (str(gyro_x)+','+str(gyro_y)+','+str(gyro_z)+','+str(accel_x)+','+str(accel_y)+','+str(accel_z)+','+str(slope_theta)+','+str(slope_psi)+','+str(slope_phi))
-=======
         print (accel_z)
         time.sleep(0.1)
->>>>>>> 67a853aef284c69d38185ff019fb5a3c6dabed5f
