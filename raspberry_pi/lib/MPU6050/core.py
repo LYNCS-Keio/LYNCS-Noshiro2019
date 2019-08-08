@@ -2,7 +2,7 @@
 #!/usr/bin/python
 
 # import module
-from smbus2 import SMBus		# use I2C
+import smbus		# use I2C
 import math  # mathmatics
 import time
 
@@ -21,7 +21,7 @@ PWR_MGMT_2 = 0x6c	# PWR_MGMT_2
 
 class MPU6050():
     def __init__(self,device):
-        self.bus = SMBus.SMBus(1)
+        self.bus = smbus.SMBus(1)
         time.sleep(0.1)
         self.DEV_ADDR = device
         self.bus.write_byte_data(self.DEV_ADDR, PWR_MGMT_1, 0)
