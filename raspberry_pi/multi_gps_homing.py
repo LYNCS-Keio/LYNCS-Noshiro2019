@@ -33,8 +33,8 @@ pinR = 12
 p = pid_controll.pid(0.004, 0.03, 0.0004)
 
 #goalの座標
-#goal_lat, goal_long = 35.554506, 139.656850 #グラウンド
-goal_lat, goal_long = 35.5550, 139.6555 #自販機横
+goal_lat, goal_long = 35.554506, 139.656850 #グラウンド
+#goal_lat, goal_long = 35.5550, 139.6555 #自販機横
 
 drift = 1.092913 #MPU補正値
 
