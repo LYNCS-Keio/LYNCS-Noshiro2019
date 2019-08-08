@@ -18,7 +18,7 @@ with open(current_dir + '/' + filename + '.csv', 'w') as c:
     with HCSR04(19, 26) as hcs:
         while 1:
             height_hcs = hcs.readData()
-            height_BME = BME.readData()
+            height_BME = BME.readData()[0]
             row = [time.time()]
             row.extend(height_hcs)
             row.extend(height_BME)
