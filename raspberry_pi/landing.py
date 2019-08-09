@@ -67,7 +67,7 @@ try:
             height_BME = BME.readData()
             row = [time.time()]
             row.extend(height_BME)
-            if height_BME <= 3: #メートル
+            if height_BME[0] <= 3: #メートル
                 count +=1
             if count == count_BME or time.time() - open_t >= break_time:
                     row.append("パラ分離")
