@@ -50,19 +50,17 @@ GPIO.output(DMUX_pin[0], DMUX_out[0])
 GPIO.output(DMUX_pin[1], DMUX_out[1])
 GPIO.output(DMUX_pin[2], DMUX_out[2])
 
-with servo(12) as svP:
-    svP.rotate(7.8)
-    time.sleep(0.2)
-    svP.stop()
-
 with open(current_dir + '/' + filename + '.csv', 'w') as c:
     f = csv.writer(c, lineterminator='\n')
     with HCSR04.HCSR04(19, 26) as hcs:
-        while 1:
-            height_hcs = [hcs.readData(34300)]
-            height_BME = [BME.readData()[0]]
-            row = [time.time()]
-            row.extend(height_hcs)
-            row.extend(height_BME)
-            f.writerow(row)
-            time.sleep(0.01)
+        with servo(12) as svP:
+            svP.rotate(7.8)
+            time.sleep(0.2)
+            while 1:
+                height_hcs = [hcs.readData(34300)]
+                height_BME = [BME.readData()[0],BME.readData()[1]]
+                row = [time.time()]
+                row.extend(height_hcs)
+                row.extend(height_BME)
+                f.writerow(row)
+                time.sleep(0.01)
