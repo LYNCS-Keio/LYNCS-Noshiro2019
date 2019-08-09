@@ -38,6 +38,7 @@ class servo:
 
 if __name__ == "__main__":
     args = sys.argv
+    GPIO.setmode(GPIO.BCM)
     GPIO.setup(11, GPIO.OUT)
     GPIO.output(11,1)
     with servo(int(args[1])) as sv:
