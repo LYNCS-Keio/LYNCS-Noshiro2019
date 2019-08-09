@@ -51,8 +51,8 @@ GPIO.output(DMUX_pin[1], DMUX_out[1])
 GPIO.output(DMUX_pin[2], DMUX_out[2])
 
 with servo(12) as svP:
-    svP.rotate(7.6)
-    time.sleep(0.1)
+    svP.rotate(7.8)
+    time.sleep(0.2)
     svP.stop()
 
 with open(current_dir + '/' + filename + '.csv', 'w') as c:
