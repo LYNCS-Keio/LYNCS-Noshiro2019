@@ -52,7 +52,7 @@ try:
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
         f = csv.writer(c, lineterminator='\n')
         with HCSR04.HCSR04(19, 26) as hcs:
-            svP.rotate(7.8)
+            svP.rotate(7.1)
             time.sleep(0.2)
             while 1:
                 height_hcs = [hcs.readData(34300)]
@@ -65,8 +65,8 @@ try:
 except:
     pass
 finally:
-    svP.rotate(7.2)
+    svP.rotate(6.6)
     time.sleep(0.5)
     svP.stop()
-    print("final!l!!)
+    print("final!l!!")
     GPIO.cleanup()
