@@ -62,7 +62,8 @@ try:
                 row.extend(height_BME)
                 f.writerow(row)
                 time.sleep(0.01)
-
+except:
+    pass
 finally:
     svP.rotate(7.2)
     time.sleep(0.5)
