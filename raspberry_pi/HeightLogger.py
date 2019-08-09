@@ -56,7 +56,7 @@ try:
             time.sleep(0.2)
             while 1:
                 height_hcs = [hcs.readData(34300)]
-                height_BME = [BME.readData()[0],BME.readData()[1]]
+                height_BME = BME.readData()
                 row = [time.time()]
                 row.extend(height_hcs)
                 row.extend(height_BME)
