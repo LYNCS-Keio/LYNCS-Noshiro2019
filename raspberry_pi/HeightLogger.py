@@ -26,6 +26,7 @@ class servo:
 
     def __del__(self):
         self.srv.stop()
+        time.sleep(0.01)
         GPIO.cleanup(self.pin)
 
     def __exit__(self, exception_type, exception_value, traceback):
