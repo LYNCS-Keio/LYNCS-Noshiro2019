@@ -51,17 +51,17 @@ while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
 try:
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
         f = csv.writer(c, lineterminator='\n')
-        with HCSR04.HCSR04(19, 26) as hcs:
-            svP.rotate(7.1)
-            time.sleep(0.2)
-            while 1:
-                height_hcs = [hcs.readData(34300)]
-                height_BME = BME.readData()
-                row = [time.time()]
-                row.extend(height_hcs)
-                row.extend(height_BME)
-                f.writerow(row)
-                time.sleep(0.01)
+        #with HCSR04.HCSR04(19, 26) as hcs:
+        svP.rotate(7.1)
+        time.sleep(0.2)
+        while 1:
+            #height_hcs = [hcs.readData(34300)]
+            height_BME = BME.readData()
+            row = [time.time()]
+            #row.extend(height_hcs)
+            row.extend(height_BME)
+            f.writerow(row)
+            #time.sleep(0.01)
 except:
     pass
 finally:
