@@ -105,9 +105,9 @@ while 1:
 print(pre)
 try:
     with servo(pinR) as svR:
-        svR.rotate(7.6)
+        svR.rotate(7.8)
         time.sleep(4)
-        svR.rotate(6.9)
+        svR.rotate(7.2)
         time.sleep(0.2)
         DMUX_out = [0,0,0]
         GPIO.output(DMUX_pin[0], DMUX_out[0])
