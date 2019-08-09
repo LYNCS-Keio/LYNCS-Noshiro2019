@@ -68,4 +68,5 @@ finally:
     svP.rotate(7.2)
     time.sleep(0.5)
     svP.stop()
+    print("final!l!!)
     GPIO.cleanup()
