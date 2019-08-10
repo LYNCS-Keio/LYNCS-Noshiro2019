@@ -1,4 +1,5 @@
 from smbus import SMBus
+import time
 
 __all__ = ['readData']
 
@@ -158,7 +159,9 @@ get_calib_param()
 
 if __name__ == '__main__':
     try:
-        print(readData())
+        while True:
+            print(readData())
+            time.sleep(0.01)
 
     except KeyboardInterrupt:
         pass
