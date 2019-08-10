@@ -13,12 +13,12 @@ pi = pigpio.pi()
 pi.set_mode(12,pigpio.OUTPUT)
 
 #for x in range(0,10):
-y = 7.1 #- x*0.05
-pi.hardware_PWM(12, 50, y*10000)
+y = 71000 #- x*0.05
+pi.hardware_PWM(12, 50, y)
 time.sleep(1)
 
-y = 6#- x*0.05
-pi.hardware_PWM(12, 50, y*10000)
+y = 60000#- x*0.05
+pi.hardware_PWM(12, 50, y)
 time.sleep(1)
 
 time.sleep(3)
