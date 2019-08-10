@@ -92,16 +92,18 @@ while 1:
 print(pre)
 try:
     index = 0
-    filename = 'landinglog' + '%04d' % index
+    filename = 'gps_hom_log' + '%04d' % index
     while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
         index += 1
-        filename = 'landinglog' + '%04d' % index
+        filename = 'gps_hom_log' + '%04d' % index
 
 
     DMUX_out = [0,0,0]
     for pin in range(0, 2):
         pi.write(DMUX_pin[pin], DMUX_out[pin])
     MPU = MPU6050.MPU6050(0x68)
+    pi.set_mode(pinL, pigpio.OUTPUT)
+    pi.set_mode(pinR, pigpio.OUTPUT)
     to_goal , rotation = [1, 0] , 0
     t1 = threading.Thread(target = gps_get)
     t2 = threading.Thread(target = gyro_get)
