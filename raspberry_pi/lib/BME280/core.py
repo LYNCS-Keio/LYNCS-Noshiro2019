@@ -141,7 +141,7 @@ def setup():
     osrs_p = 1  #Pressure oversampling x 1
     osrs_h = 1  #Humidity oversampling x 1
     mode = 3  #Normal mode
-    t_sb = 5  #Tstandby 1000ms
+    t_sb = 0  #Tstandby 1000ms
     filter = 0  #Filter off
     spi3w_en = 0  #3-wire SPI Disable
 
