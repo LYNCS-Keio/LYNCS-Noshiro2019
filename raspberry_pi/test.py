@@ -17,6 +17,5 @@ for x in range(1,10):
     sv.ChangeDutyCycle(y)
     time.sleep(0.1)
 
-sv.stop()
 time.sleep(1)
 GPIO.cleanup()
