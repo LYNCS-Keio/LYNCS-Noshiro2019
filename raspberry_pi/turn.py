@@ -1,24 +1,30 @@
+# -*-coding: utf-8 -*-
+
 from lib import pid_controll
 from lib import MPU6050
-import RPi.GPIO as gpio
+import pigpio
 import time
 
 
 rotation = 0
-drift = 0.91031267
+drift = -1.032555
 
-gpio.setmode(gpio.BCM)
-gpio.setwarnings(False)
-gpio.setup([11, 9, 10, 13, 18], gpio.OUT)
-gpio.output(11, False)
-gpio.output(9, False)
-gpio.output(10, False)
-svL, svR = gpio.PWM(13, 50), gpio.PWM(18, 50)
-svL.start(6.835)
-svR.start(6.86)
+
+pi = pigpio.pi()
+
+pi.setup(11, pi.OUTPUT)
+pi.setup(9, pi.OUTPUT)
+pi.setup(10, pi.OUTPUT)
+pi.setup(13, pi.OUTPUT)
+pi.setup(12, pi.OUTPUT)
+pi.write(11, 0)
+pi.write(9, 0)
+pi.write(10, 0)
+svL, svR = pi.hardware_PWM(13, 50, 75000), pi.hardware_PWM(12, 50, 75000)
+
 
 mpu = MPU6050.MPU6050(0x68)
-p = pid_controll.pid(0.004, 0.02365, 0.0002436)
+p = pid_controll.pid(0.004, 0.03, 0.0004)
 #p = pid_controll.pid(4.8, 23.65, 0.2436)
 pt = time.time()
 
@@ -34,14 +40,12 @@ try:
 
         m1 = min([max([m, -1]), 1])
 
-        dL, dR = 6.835 + 1.25 * (0 - m1), 6.86 - 1.25 * (0 + m1)
-        svL.ChangeDutyCycle(dL)
-        svR.ChangeDutyCycle(dR)
-        print([90 - rotation])
+        dL, dR = 75000 + 12500 * (0 - m1), 75000 - 12500 * (0 + m1)
+        pi.hardware_PWM(13, 50, int(dL))
+        pi.hardware_PWM(12, 50, int(dR))
+        print([m, dL, dR, rotation])
         time.sleep(0.01)
-        if 90 - rotation > -1 and 1 > 90 - rotation :
-            break
+
 finally:
-    svL.stop()
-    svR.stop()
-    gpio.cleanup()
+    pi.hardware_PWM(12, 0, 0)
+    pi.hardware_PWM(13, 0, 0)
