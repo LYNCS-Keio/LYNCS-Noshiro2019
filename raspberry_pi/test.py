@@ -1,5 +1,6 @@
 import time
 import RPi.GPIO as GPIO
+import pigpio
 
 GPIO.setmode(GPIO.BCM)
 pinDMUX=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
@@ -8,14 +9,18 @@ pinPWM=12 #マルチプレクサ側PWMのピン
 for pin in range(0,2):
     GPIO.setup(pinDMUX[pin],GPIO.OUT)
     GPIO.output(pinDMUX[pin],DMUX_out[pin]) #分離サーボの出力指定
-GPIO.setup(12,GPIO.OUT)
-sv = GPIO.PWM(pinPWM, 50)
-sv.start(7.1)
-time.sleep(0.5)
-for x in range(1,10):
-    y = 7.1 - x*0.05
-    sv.ChangeDutyCycle(y)
-    time.sleep(0.1)
+pi = pigpio.pi()
+pi.set_mode(12,pigpio.OUTPUT)
 
+#for x in range(0,10):
+y = 7.1 #- x*0.05
+pi.hardware_PWM(12, 50, y*10000)
 time.sleep(1)
+
+y = 6#- x*0.05
+pi.hardware_PWM(12, 50, y*10000)
+time.sleep(1)
+
+time.sleep(3)
 GPIO.cleanup()
+pi.stop()
