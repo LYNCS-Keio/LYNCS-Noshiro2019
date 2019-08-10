@@ -41,8 +41,8 @@ pi.hardware_PWM(PWM_pin, 50, duty_lock)
 time.sleep(0.5)
 
 
-BME.setup()
-BME.get_calib_param()
+#BME.setup()
+#BME.get_calib_param()
 
 count = 0
 count_BME = 10                              #BMEがn回範囲内になったらbreak
@@ -84,9 +84,10 @@ try:
             if count == count_BME:
                 row.append("release parachute")
                 break
-            elif time.time() - release_t >= bme_break_time:
-                row.append("timeout")
-                break
+            time.sleep(0.01)
+            #elif time.time() - release_t >= bme_break_time:
+            #    row.append("timeout")
+            #    break
             f.writerow(row)
 
             '''
