@@ -2,32 +2,36 @@
 from lib import rover_gps as GPS
 from lib import MPU6050
 from lib import pid_controll
-import RPi.GPIO as GPIO
+import pigpio
 import math
 import time
 import threading
+import os
+import csv
 
-DMUX_pin=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
-DMUX_out = [1, 0, 0]  #出力ピン指定のHIGH,LOWデータ
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(DMUX_pin[0], GPIO.OUT)
-GPIO.setup(DMUX_pin[1], GPIO.OUT)
-GPIO.setup(DMUX_pin[2], GPIO.OUT)
 
-GPIO.output(DMUX_pin[0], DMUX_out[0])
-GPIO.output(DMUX_pin[1], DMUX_out[1])
-GPIO.output(DMUX_pin[2], DMUX_out[2])
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 #画像誘導に切り替える距離(km)
 cam_dis = 0.01
-forward_dis = 0.01#初めの直進距離(km)
+forward_dis = 0.01  # 初めの直進距離(km)
 
-neutralL = 6.9
-neutralR = 6.9
 pinL = 13
 pinR = 12
-#PID
+
+m = 0
+
+lock = threading.Lock()
+
+pi = pigpio.pi()
+
+
+DMUX_pin=[11,9,10]                      #マルチプレクサの出力指定ピンA,B,C
+DMUX_out = [1, 0, 0]                    #出力ピン指定のHIGH,LOWデータ
+for pin in range(0, 2):
+    pi.set_mode(DMUX_pin[pin], pigpio.OUTPUT)
+    pi.write(DMUX_pin[pin], DMUX_out[pin])
+
 
 #p = pid_controll.pid(0.003, 0.03365, 0.0002436)
 #p = pid_controll.pid(0.004, 0.02365, 0.0002436)
@@ -39,24 +43,6 @@ goal_lat, goal_long = 35.554506, 139.656850 #グラウンド
 
 drift = -1.032555
 
-class servo:
-    def __init__(self, pin):
-        self.pin = pin
-        GPIO.setup(self.pin, GPIO.OUT)
-        self.srv = GPIO.PWM(self.pin, 50)
-        self.srv.start(7.5)
-
-    def __enter__(self):
-        return self
-
-    def rotate(self, duty):
-        self.srv.ChangeDutyCycle(duty)
-
-    def __del__(self):
-        self.srv.stop()
-
-    def __exit__(self, exception_type, exception_value, traceback):
-        pass
 
 def gps_get():
     global to_goal, rotation, pre
@@ -77,8 +63,9 @@ def gps_get():
             if to_goal[0] < cam_dis:
                 break
 
+
 def gyro_get():
-    global to_goal, rotation, dL, dR
+    global to_goal, rotation, dL, dR, m
     pt = time.time()
     while 1:
         #dutyLを変える
@@ -89,7 +76,7 @@ def gyro_get():
         rotation += gyro * dt
         m = p.update_pid(to_goal[1] , rotation, dt)
         m1 = min([max([m, -1]), 1])
-        dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
+        dL, dR = 75000 + 12500 * (1 - m1), 75000 - 12500 * (1 + m1)
         print([m, rotation, to_goal[1] - rotation])
         time.sleep(0.01)
 
@@ -104,33 +91,36 @@ while 1:
         break
 print(pre)
 try:
-    with servo(pinR) as svR:
-        svR.rotate(7.8)
-        time.sleep(4)
-        svR.rotate(7.2)
-        time.sleep(0.2)
-        DMUX_out = [0,0,0]
-        GPIO.output(DMUX_pin[0], DMUX_out[0])
-        GPIO.output(DMUX_pin[1], DMUX_out[1])
-        GPIO.output(DMUX_pin[2], DMUX_out[2])
-        svR.rotate(neutralR)
-        MPU = MPU6050.MPU6050(0x68)
-        to_goal , rotation = [1, 0] , 0
-        with servo(pinL) as svL:
-                lock=threading.Lock()
-                t1 = threading.Thread(target = gps_get)
-                t2 = threading.Thread(target = gyro_get)
-                t1.start()
-                t2.start()
-                while 1:
-                    svL.rotate(dL)
-                    svR.rotate(dR)
-                    if to_goal[0] < cam_dis:
-                        svR.rotate(neutralR)
-                        svL.rotate(neutralL)
-                        break
+    index = 0
+    filename = 'landinglog' + '%04d' % index
+    while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
+        index += 1
+        filename = 'landinglog' + '%04d' % index
+
+
+    DMUX_out = [0,0,0]
+    for pin in range(0, 2):
+        pi.write(DMUX_pin[pin], DMUX_out[pin])
+    MPU = MPU6050.MPU6050(0x68)
+    to_goal , rotation = [1, 0] , 0
+    t1 = threading.Thread(target = gps_get)
+    t2 = threading.Thread(target = gyro_get)
+    t1.start()
+    t2.start()
+
+
+    with open(current_dir + '/' + filename + '.csv', 'w') as c:
+        f = csv.writer(c, lineterminator='\n')
+        while 1:
+            pi.hardware_PWM(pinL, 50, int(dL))
+            pi.hardware_PWM(pinR, 50, int(dR))
+            if to_goal[0] < cam_dis:
+                pi.hardware_PWM(pinL, 50, 75000)
+                pi.hardware_PWM(pinR, 50, 75000)
+                break
+            f.writerow([time.time(), m, rotation, to_goal[1] - rotation])
+
 
 finally:
-    GPIO.cleanup()
-    svL = None
-    svR = None
+    pi.hardware_PWM(pinL, 0, 0)
+    pi.hardware_PWM(pinR, 0, 0)
