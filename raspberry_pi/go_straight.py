@@ -12,11 +12,11 @@ drift = -1.032555
 
 pi = pigpio.pi()
 
-pi.setup(11, pi.OUTPUT)
-pi.setup(9, pi.OUTPUT)
-pi.setup(10, pi.OUTPUT)
-pi.setup(13, pi.OUTPUT)
-pi.setup(12, pi.OUTPUT)
+pi.set_mode(11, pi.OUTPUT)
+pi.set_mode(9, pi.OUTPUT)
+pi.set_mode(10, pi.OUTPUT)
+pi.set_mode(13, pi.OUTPUT)
+pi.set_mode(12, pi.OUTPUT)
 pi.write(11, 0)
 pi.write(9, 0)
 pi.write(10, 0)
@@ -49,4 +49,3 @@ try:
 finally:
     pi.hardware_PWM(12, 0, 0)
     pi.hardware_PWM(13, 0, 0)
-    
