@@ -73,12 +73,15 @@ try:
             row = [time.time()]
             print(height_BME)
             row.extend(height_BME)
-            if height_BME[0] <= 3: #メートル
+            if height_BME[0] <= 3: #meter
                 count +=1
                 row.append(count)
-            if count == count_BME or time.time() - open_t >= break_time:
-                    row.append("パラ分離")
-                    break
+            if count == count_BME:
+                row.append("release parachute")
+                break
+            elif time.time() - open_t >= break_time:
+                row.append("timeout")
+                break
             f.writerow(row)
 
             '''
@@ -99,8 +102,9 @@ try:
 
         pi.hardware_PWM(PWM_pin, 50, duty_release)
         time.sleep(1)
-        pi.hardware_PWM(PWM_pin, 0, 0)
         f.writerow(row)
 
 finally:
-    pass
+    pi.hardware_PWM(PWM_pin, 0, 0)
+    for pin in range(0, 2):
+        pi.write(DMUX_pin[pin], 0)
