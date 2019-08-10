@@ -99,6 +99,7 @@ try:
 
         pi.hardware_PWM(PWM_pin, 50, duty_release)
         time.sleep(1)
+        pi.hardware_PWM(PWM_pin, 0, 0)
         f.writerow(row)
 
 finally:
