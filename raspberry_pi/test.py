@@ -8,6 +8,7 @@ pinPWM=12 #マルチプレクサ側PWMのピン
 for pin in range(0,2):
     GPIO.setup(pinDMUX[pin],GPIO.OUT)
     GPIO.output(pinDMUX[pin],DMUX_out[pin]) #分離サーボの出力指定
+GPIO.setup(12,GPIO.OUT)
 sv = GPIO.PWM(pinPWM, 50)
 sv.start(7.1)
 time.sleep(0.5)
