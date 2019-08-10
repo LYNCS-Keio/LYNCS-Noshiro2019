@@ -3,59 +3,33 @@ from lib import camera
 from lib import capture
 from lib import MPU6050
 from lib import pid_controll
-import RPi.GPIO as gpio
+import pigpio
 import math
 import time
 import threading
 
 pinL, pinR = 13, 12
 
-gpio.setmode(gpio.BCM)
-gpio.setwarnings(False)
 AoV = 54  # angle of view
 height = 480
 width = 640
 rotation = 0
-drift = 1.092913
-cam_interval = 1
+drift = -1.092913
+cam_interval = 0.2
 rotation_lock = threading.Lock()
 pt = 0
 
+pi = pigpio.pi()
+
 DMUX_pin = [11, 9, 10]  # マルチプレクサの出力指定ピンA,B,C
 DMUX_out = [0, 0, 0]  # 出力ピン指定のHIGH,LOWデータ
-gpio.setup(DMUX_pin[0], gpio.OUT)
-gpio.setup(DMUX_pin[1], gpio.OUT)
-gpio.setup(DMUX_pin[2], gpio.OUT)
-
-gpio.output(DMUX_pin[0], DMUX_out[0])
-gpio.output(DMUX_pin[1], DMUX_out[1])
-gpio.output(DMUX_pin[2], DMUX_out[2])
+for pin in range(0, 2):
+    pi.set_mode(DMUX_pin[pin], pigpio.OUTPUT)
+    pi.write(DMUX_pin[pin], DMUX_out[pin])
 
 pt = time.time()
 
-
-class servo:
-    def __init__(self, pin):
-        self.pin = pin
-        gpio.setup(self.pin, gpio.OUT)
-        self.srv = gpio.PWM(self.pin, 50)
-        self.srv.start(7.5)
-
-    def __enter__(self):
-        return self
-
-    def rotate(self, duty):
-        self.srv.ChangeDutyCycle(duty)
-
-    def __del__(self):
-        self.srv.stop()
-
-    def __exit__(self, exception_type, exception_value, traceback):
-        pass
-
-
 p = pid_controll.pid(0.004, 0.03, 0.0002436)
-svL, svR = servo(pinL), servo(pinR)
 cap = capture.capture()
 cam = camera.CamAnalysis()
 mpu = MPU6050.MPU6050(0x68)
@@ -83,7 +57,7 @@ def update_rotation_with_cam():
 
     conX = ((coord[0] - width / 2) / (width / 2)) / math.sqrt(3)
     rotation_lock.acquire()
-    rotation = math.atan(conX)
+    rotation = math.atan(-conX)
     rotation_lock.release()
 
 
@@ -95,13 +69,13 @@ try:
     URwC_thread.start()
 
     while True:
-        m = p.update_pid(to_goal[1], rotation, dt)
+        m = p.update_pid(0, rotation, dt)
         m1 = min([max([m, -1]), 1])
-        dL, dR = neutralL + 1.25 * (1 - m1), neutralR - 1.25 * (1 + m1)
+        dL, dR = 75000 + 12500 * (1 - m1), 75000 - 12500 * (1 + m1)
         print([m, rotation, to_goal[1] - rotation])
 
-        svL.rotate(dL)
-        svR.rotate(dR)
+        pi.hardware_PWM(pinL, 50, int(dL))
+        pi.hardware_PWM(pinR, 50, int(dR))
 
 
 except:
