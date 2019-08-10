@@ -3,44 +3,49 @@
 from lib import BME280 as BME
 #from lib import HCSR04
 from lib import MPU6050
-import RPi.GPIO as GPIO
+import pigpio
 import time
 import csv
 import os
 
 
 #sound_velocity = 34300
-time_range=5 #加速度が落ち着いている判定の判定時間
-break_time=30 #キャリア判定からの経過時間による着陸判定用
-extent=0.02 #MPUの誤差込みの判定にするための変数
-pinDMUX=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
-DMUX_out=[1,0,0] #出力ピン指定のHIGH,LOWデータ
-pinPWM=12 #マルチプレクサ側PWMのピン
+time_range=5                                #加速度が落ち着いている判定の判定時間
+break_time=30                               #キャリア判定からの経過時間による着陸判定用
+extent=0.02                                 #MPUの誤差込みの判定にするための変数
+DMUX_pin=[11,9,10]                          #マルチプレクサの出力指定ピンA,B,C
+DMUX_out=[1,0,0]                            #出力ピン指定のHIGH,LOWデータ
+PWM_pin=12                                  #マルチプレクサ側PWMのピン
 #trigger, echo = 19, 26
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
+pi = pigpio.pi()
+
+pi.set_mode(PWM_pin, pigpio.OUTPUT)
 #GPIO.setup(trigger, GPIO.OUT)
-GPIO.setup(pinPWM, GPIO.OUT)
 #GPIO.setup(echo, GPIO.IN)
+
+duty_lock = 68500
+duty_release = 62500
+
 
 mpu = MPU6050.MPU6050(0x68)
 
-for pin in range(0,2):
-    GPIO.setup(pinDMUX[pin],GPIO.OUT)
-    GPIO.output(pinDMUX[pin],DMUX_out[pin]) #分離サーボの出力指定
 
-sv = GPIO.PWM(pinPWM, 50)
-sv.start(7.1)
+for pin in range(0,2):
+    pi.set_mode(DMUX_pin[pin], pigpio.OUTPUT)
+    pi.write(DMUX_pin[pin], DMUX_out[pin])  # 分離サーボの出力指定
+
+pi.hardware_PWM(PWM_pin, 50, duty_lock)
 time.sleep(0.5)
-'''
+
+
 BME.setup()
 BME.get_calib_param()
-'''
 
 count = 0
-count_BME = 10 #BMEがn回範囲内になったらbreak
+count_BME = 10                              #BMEがn回範囲内になったらbreak
+
 
 try:
     index = 0
@@ -76,25 +81,25 @@ try:
                     break
             f.writerow(row)
 
-            #GPIO.output(trigger, True)
-            #time.sleep(0.000010)
-            #GPIO.output(trigger, False)
+            '''
+            GPIO.output(trigger, True)
+            time.sleep(0.000010)
+            GPIO.output(trigger, False)
 
-            #GPIO.wait_for_edge(echo, GPIO.RISING, timeout=10)
-            #time_1 = time.time()
-            #GPIO.wait_for_edge(echo, GPIO.FALLING, timeout=15)
-            #delta = time.time() - time_1 + 0.0002
-            #distance = (delta * sound_velocity) / 2
-            #print(distance)
-            #if (time.time()-now_t > break_time) or ((70 <= distance) and (distance <= 200)):
-            #    break
-            #time.sleep(0.01)
+            GPIO.wait_for_edge(echo, GPIO.RISING, timeout=10)
+            time_1 = time.time()
+            GPIO.wait_for_edge(echo, GPIO.FALLING, timeout=15)
+            delta = time.time() - time_1 + 0.0002
+            distance = (delta * sound_velocity) / 2
+            print(distance)
+            if (time.time()-now_t > break_time) or ((70 <= distance) and (distance <= 200)):
+                break
+            time.sleep(0.01)
+            '''
 
-        sv.ChangeDutyCycle(6.6)
+        pi.hardware_PWM(PWM_pin, 50, duty_release)
         time.sleep(1)
         f.writerow(row)
 
 finally:
-    time.sleep(1)
-    sv.stop()
-    GPIO.cleanup()
+    pass
