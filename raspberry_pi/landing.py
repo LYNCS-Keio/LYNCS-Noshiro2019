@@ -10,8 +10,9 @@ import os
 
 
 #sound_velocity = 34300
-time_range=5                                #加速度が落ち着いている判定の判定時間
-break_time=30                               #キャリア判定からの経過時間による着陸判定用
+time_range = 5
+mpu_break_time=120                                #加速度が落ち着いている判定の判定時間
+bme_break_time=30                               #キャリア判定からの経過時間による着陸判定用
 extent=0.02                                 #MPUの誤差込みの判定にするための変数
 DMUX_pin=[11,9,10]                          #マルチプレクサの出力指定ピンA,B,C
 DMUX_out=[1,0,0]                            #出力ピン指定のHIGH,LOWデータ
@@ -57,6 +58,8 @@ try:
         f = csv.writer(c, lineterminator='\n')
 
         count_mpu = 0
+
+        start_t = time.time()
         while 1:
             accel3 = mpu.get_accel_data_lsb()
             g = (accel3[0]**2 + accel3[1]**2 + accel3[2]**2)**0.5
@@ -66,8 +69,10 @@ try:
                 count_mpu = 0
             if count_mpu >= 10:
                 break
-        open_t = time.time()
+            elif time.time() - start_t >= mpu_break_time:
+                break
 
+        release_t = time.time()
         while 1:
             height_BME = BME.readData()
             row = [time.time()]
@@ -79,7 +84,7 @@ try:
             if count == count_BME:
                 row.append("release parachute")
                 break
-            elif time.time() - open_t >= break_time:
+            elif time.time() - release_t >= bme_break_time:
                 row.append("timeout")
                 break
             f.writerow(row)
