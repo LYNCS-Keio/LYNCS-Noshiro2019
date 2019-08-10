@@ -15,7 +15,7 @@ time.sleep(0.5)
 for x in range(1,10):
     y = 7.1 - x*0.05
     sv.ChangeDutyCycle(y)
-    time.sleep(0.005)
+    time.sleep(0.1)
 
 sv.stop()
 time.sleep(1)
