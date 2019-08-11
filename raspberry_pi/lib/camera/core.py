@@ -37,9 +37,9 @@ class CamAnalysis:
             #    # Find center of gravity
             m = cv2.moments(contours[max_area_index])
             x, y = (m['m10'] / m['m00']), (m['m01'] / m['m00'])
-            cv2.drawContours(self.stream, contours, -1, (255, 255, 255), 2)
-            cv2.circle(self.stream, (int(x), int(y)), 30, (0, 255, 0), 2)
-            return [x, y]
+            #cv2.drawContours(self.stream, contours, -1, (255, 255, 255), 2)
+            #cv2.circle(self.stream, (int(x), int(y)), 30, (0, 255, 0), 2)
+            return [x, y, areas[max_area_index]] 
 
     def save_all_outputs(self):
         index = 0
