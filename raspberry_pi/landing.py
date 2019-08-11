@@ -73,6 +73,7 @@ try:
                 break
 
         release_t = time.time()
+        time.sleep(2)
         while 1:
             height_BME = BME.readData()
             row = [time.time() - start_t]
@@ -81,10 +82,12 @@ try:
             if height_BME[0] <= 3: #meter
                 count +=1
                 row.append(count)
-            if count == count_BME:
+            else:
+                count = 0
+            if count >= count_BME:
                 row.append("release parachute")
                 break
-            time.sleep(0.01)
+            time.sleep(0.0007)
             #elif time.time() - release_t >= bme_break_time:
             #    row.append("timeout")
             #    break
