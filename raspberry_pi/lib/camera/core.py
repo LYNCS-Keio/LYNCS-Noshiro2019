@@ -25,7 +25,7 @@ class CamAnalysis:
         self.mask = cv2.morphologyEx(self.mask, cv2.MORPH_CLOSE, kernel)
         
     def contour_find(self):
-        contours = cv2.findContours(self.mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[0]
+        contours = cv2.findContours(self.mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[1]
         if len(contours) == 0:
             return [-1,-1]
         else:
