@@ -27,7 +27,7 @@ class CamAnalysis:
         self.mask = cv2.morphologyEx(self.mask, cv2.MORPH_CLOSE, kernel)
 
     def contour_find(self):
-        contours = cv2.findContours(self.mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[0]
+        contours = cv2.findContours(self.mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)[1]
         if len(contours) == 0:
             return [-1,-1]
         else:
@@ -42,9 +42,27 @@ class CamAnalysis:
             return [x, y]
 
     def save_all_outputs(self):
-        cv2.imwrite(current_dir + '/bgr2hsv.png', self.stream_hsv)
-        cv2.imwrite(current_dir + '/morpho.png', self.mask)
-        cv2.imwrite(current_dir + '/contour.png', self.stream)
+        index = 0
+        filename1 = 'bgr2hsv' + '%04d' % index
+        while os.path.isfile(current_dir + '/' + filename1 + '.png') == True:
+            index += 1
+            filename1 = 'bgr2hsv' + '%04d' % index
+
+        index = 0
+        filename2 = 'morpho' + '%04d' % index
+        while os.path.isfile(current_dir + '/' + filename2 + '.png') == True:
+            index += 1
+            filename2 = 'morpho' + '%04d' % index
+
+        index = 0
+        filename3 = 'contour' + '%04d' % index
+        while os.path.isfile(current_dir + '/' + filename3 + '.png') == True:
+            index += 1
+            filename3 = 'contour' + '%04d' % index
+        
+        cv2.imwrite(current_dir + '/' + filename1 + '.png', self.stream_hsv)
+        cv2.imwrite(current_dir + '/' + filename2 + '.png', self.mask)
+        cv2.imwrite(current_dir + '/' + filename3 + '.png', self.stream)
 
 
 if __name__ == '__main__':
