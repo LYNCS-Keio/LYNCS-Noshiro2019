@@ -75,7 +75,7 @@ try:
         release_t = time.time()
         while 1:
             height_BME = BME.readData()
-            row = [time.time()]
+            row = [time.time() - release_t]
             print(height_BME)
             row.extend(height_BME)
             if height_BME[0] <= 3: #meter
