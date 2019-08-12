@@ -13,7 +13,7 @@ import csv
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 #画像誘導に切り替える距離(km)
-cam_dis = 0.01
+cam_dis = 0.005
 forward_dis = 0.01  # 初めの直進距離(km)
 
 pinL = 13
@@ -38,7 +38,7 @@ for pin in range(0, 2):
 p = pid_controll.pid(0.004, 0.03, 0.0004)
 
 #goalの座標
-goal_lat, goal_long = 35.554532, 139.6564 #グラウンド
+goal_lat, goal_long = 35.5545974, 139.6563162 #グラウンド
 #goal_lat, goal_long = 35.5550, 139.6555 #自販機横
 
 drift = -1.032555
