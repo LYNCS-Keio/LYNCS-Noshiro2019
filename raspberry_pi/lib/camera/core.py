@@ -18,8 +18,8 @@ class CamAnalysis:
         self.stream = stream
         self.stream_hsv = cv2.cvtColor(self.stream, cv2.COLOR_BGR2HSV)
         # Target Finder
-        UPPER_THRESHOLD = (220, 255, 255)
-        LOWER_THRESHOLD = (140, 40, 40)
+        UPPER_THRESHOLD = (20, 255, 255)
+        LOWER_THRESHOLD = (0, 40, 40)
         self.mask = cv2.inRange(self.stream_hsv, LOWER_THRESHOLD, UPPER_THRESHOLD)
         # Remove Noises
         kernel = np.ones((9, 9))

@@ -9,4 +9,4 @@ cam.morphology_extract(stream)
 cam.save_all_outputs()
 coord = cam.contour_find()
 
-print(coord[1])
+print(coord[2])
