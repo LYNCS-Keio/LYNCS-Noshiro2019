@@ -24,8 +24,8 @@ class capture:
         image = cv2.imdecode(data, 1)
         return image
 
-    def flush(self):
-        cv2.imwrite(current_dir + 'capture.png', self.stream)
+    def flush(self, stream):
+        cv2.imwrite(current_dir + '/capture.png', stream)
 
     def __del__(self):
         self.camera.stop_preview()
@@ -34,6 +34,6 @@ class capture:
 if __name__ == '__main__':
     ca = capture()
     time.sleep(2)
-    ca.cap()
-    ca.flush()
+    stream = ca.cap()
+    ca.flush(stream)
     del ca
