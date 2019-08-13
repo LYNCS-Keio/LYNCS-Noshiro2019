@@ -80,7 +80,7 @@ def readData():
     recover_P = compensate_P(pres_raw)
     #recover_H = compensate_H(hum_raw)
     mesure_high = ((((sea_pressure/recover_P)**(1/5.257)) - 1.) * (recover_T + 273.15)) / 0.0065
-    return mesure_high
+    return mesure_high, recover_P, recover_T
 
 
 def compensate_P(adc_P):
