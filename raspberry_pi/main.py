@@ -14,12 +14,12 @@ import math
 import threading
 
 time_range = 5
-mpu_break_time=120
-bme_break_time=30  #キャリア判定からの経過時間による着陸判定用
-extent=0.02    #MPUの誤差込みの判定にするための変数
-DMUX_pin=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
-DMUX_out=[1,0,0]  #出力ピン指定のHIGH,LOWデータ
-PWM_pin=12  #マルチプレクサ側PWMのピン
+release_timeout =120
+bme_timeout=30                           #キャリア判定からの経過時間による着陸判定用
+extent=0.02                                 #MPUの誤差込みの判定にするための変数
+DMUX_pin=[11,9,10]                          #マルチプレクサの出力指定ピンA,B,C
+DMUX_out=[1,0,0]                            #出力ピン指定のHIGH,LOWデータ
+PWM_pin=12                                  #マルチプレクサ側PWMのピン
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 pi = pigpio.pi()
@@ -35,9 +35,9 @@ for pin in range(0,2):
 pi.hardware_PWM(PWM_pin, 50, duty_lock)
 time.sleep(0.5)
 
-#goal_lat, goal_long = 35.5550, 139.6555 #自販機横
 count = 0
-count_BME = 10                              #BMEがn回範囲内になったらbreak
+count_bme = 0
+limit_bme = 10                              #BMEがn回範囲内になったらbreak
 
 try:
     index = 0
@@ -47,7 +47,6 @@ try:
         filename = 'landinglog' + '%04d' % index
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
         csv_writer = csv.writer(c, lineterminator='\n')
-        count_mpu = 0
         start_t = time.time()
         while 1:
             """
@@ -62,19 +61,19 @@ try:
             elif time.time() - start_t >= mpu_break_time:
                 break
             """
-            height_BME_40 = BME.readData()
+            height_BME = BME.readData()
             print(height_BME)
             if height_BME[0] >= 40: #meter
-                count_mpu +=1
+                count_bme += 1
             else:
-                count_mpu = 0
-            if count_mpu >= count_BME:
+                count_bme = 0
+            if count_bme >= limit_bme:
                 break
-            elif time.time() - start_t >= mpu_break_time:
+            elif time.time() - start_t >= release_timeout:
                 break
             time.sleep(0.0007)
 
-        release_t = time.time()
+        release_time = time.time()
         time.sleep(2)
         while 1:
             height_BME = BME.readData()
@@ -89,7 +88,7 @@ try:
             if count >= count_BME:
                 row.append("release parachute")
                 break
-            elif time.time() - release_t >= bme_break_time:
+            elif time.time() - release_time >= bme_timeout:
                 row.append("timeout")
                 break
             time.sleep(0.0007)
@@ -136,7 +135,7 @@ def gps_get():
         now = GPS.lat_long_measurement()
         if now[0] != None and now[1] != None:
             to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
-            print(to_goal[0])sudo pigpiod
+            print(to_goal[0])
 
             if flag == 0 and GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[0] >= forward_dis:
                 lock.acquire()
@@ -226,8 +225,7 @@ rotation_lock = threading.Lock()
 
 URwC_flag = 1
 
-DMUX_pin = [11, 9, 1
-pi = pigpio.pi()0]  # マルチプレクサの出力指定ピンA,B,C
+DMUX_pin = [11, 9, 10]  # マルチプレクサの出力指定ピンA,B,C
 DMUX_out = [0, 0, 0]  # 出力ピン指定のHIGH,LOWデータ
 for pin in range(0, 2):
     pi.set_mode(DMUX_pin[pin], pigpio.OUTPUT)
