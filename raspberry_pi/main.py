@@ -15,10 +15,10 @@ import threading
 
 time_range = 5
 release_timeout =120
-bme_timeout=30                           #キャリア判定からの経過時間による着陸判定用
+bme_timeout=30                              #キャリア判定からの経過時間による着陸判定用
 extent=0.02                                 #MPUの誤差込みの判定にするための変数
-DMUX_pin=[11,9,10]                          #マルチプレクサの出力指定ピンA,B,C
-DMUX_out=[1,0,0]                            #出力ピン指定のHIGH,LOWデータ
+DMUX_pin = [11, 9, 10]                      #マルチプレクサの出力指定ピンA,B,C
+DMUX_out = [1, 0, 0]                        #出力ピン指定のHIGH,LOWデータ
 PWM_pin=12                                  #マルチプレクサ側PWMのピン
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -222,13 +222,14 @@ height = 240
 width = 320
 rotation = 0
 cam_interval = 1.5
+area = 400
 lock = threading.Lock()
 
 URwC_flag = 1
 
 
 def update_rotation_with_cam():
-    global rotation
+    global rotation, area
     cap = capture.capture()
     cam = camera.CamAnalysis()
     while URwC_flag == 1:
@@ -241,6 +242,7 @@ def update_rotation_with_cam():
 
         lock.acquire()
         rotation = math.degrees(math.atan(-conX))
+        area = coord[2]
         lock.release()
 
         #print (coord[0], rotation)
@@ -250,8 +252,33 @@ try:
     URwC_thread.start()
     print('URwC start')
     pt = time.time()
+    forward = 0
+    count_spin = 0
 
     while True:
+        if URwC_flag == 0 and (rotation <= 0.5 and rotation >= -0.5):
+            URwC_flag = 1
+            pi.hardware_PWM(pinL, 50, 75000)
+            pi.hardware_PWM(pinR, 50, 75000)
+            time.sleep(2)
+            forward = 1
+
+        if area <= 300 and forward == 1:
+            rotation = -45
+            URwC_flag = 0
+            forward = 0
+            count_spin += 1
+            if count_spin == 9:
+                rotation = 0
+                forward = 1
+                count_spin = 0
+                URwC_flag = 1
+        else:
+            count_spin == 0
+        if area >= 65280:
+            URwC_flag = 0
+            break
+
         gyro = mpu.get_gyro_data_lsb()[2] + drift
         nt = time.time()
         dt = nt - pt
@@ -262,7 +289,7 @@ try:
 
         m = p.update_pid(0, rotation, dt)
         m1 = min([max([m, -1]), 1])
-        dL, dR = 75000 + 12500 * (1 - m1), 75000 - 12500 * (1 + m1)
+        dL, dR = 75000 + 12500 * (forward - m1), 75000 - 12500 * (forward + m1)
         print([m1, rotation])
 
         pi.hardware_PWM(pinL, 50, int(dL))
