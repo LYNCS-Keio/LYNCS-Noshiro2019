@@ -3,11 +3,13 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[dev-packages]
+
 [packages]
-opencv-python = "*"
+opencv-python = "==3.4.5.20"
 pynmea2 = "*"
-smbus2 = "*"
-"RPI.GPIO" = "*"
+pigpio = "*"
+smbus = "*"
 pyserial = {git = "https://github.com/pyserial/pyserial.git"}
 
 [requires]
