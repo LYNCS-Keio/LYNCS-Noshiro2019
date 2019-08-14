@@ -1,4 +1,3 @@
-from lib import HCSR04
 from lib import BME280 as BME
 import time
 import csv
@@ -62,8 +61,6 @@ try:
             row.extend(height_BME)
             f.writerow(row)
             #time.sleep(0.01)
-except:
-    pass
 finally:
     svP.rotate(6.6)
     time.sleep(0.5)
