@@ -25,7 +25,6 @@ lock = threading.Lock()
 
 pi = pigpio.pi()
 
-
 DMUX_pin=[11,9,10]                      #マルチプレクサの出力指定ピンA,B,C
 DMUX_out = [1, 0, 0]                    #出力ピン指定のHIGH,LOWデータ
 for pin in range(0, 2):
@@ -33,16 +32,12 @@ for pin in range(0, 2):
     pi.write(DMUX_pin[pin], DMUX_out[pin])
 
 
-#p = pid_controll.pid(0.003, 0.03365, 0.0002436)
-#p = pid_controll.pid(0.004, 0.02365, 0.0002436)
 p = pid_controll.pid(0.004, 0.03, 0.0004)
 
 #goalの座標
 goal_lat, goal_long = 35.5545974, 139.6563162 #グラウンド
-#goal_lat, goal_long = 35.5550, 139.6555 #自販機横
 
 drift = -1.032555
-
 
 def gps_get():
     global to_goal, rotation, pre
@@ -94,7 +89,7 @@ try:
     index = 0
     filename = 'gps_hom_log' + '%04d' % index
     while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
-        index += 1
+        index ++
         filename = 'gps_hom_log' + '%04d' % index
 
 
@@ -111,8 +106,8 @@ try:
     t2.start()
 
 
-    with open(current_dir + '/' + filename + '.csv', 'w') as c:
-        f = csv.writer(c, lineterminator='\n')
+    with open(current_dir + '/' + filename + f'.csv', 'w') as c:
+        csv_writer = csv.writer(c, lineterminator='\n')
         while 1:
             pi.hardware_PWM(pinL, 50, int(dL))
             pi.hardware_PWM(pinR, 50, int(dR))
@@ -120,7 +115,7 @@ try:
                 pi.hardware_PWM(pinL, 50, 75000)
                 pi.hardware_PWM(pinR, 50, 75000)
                 break
-            f.writerow([time.time(), m, rotation, to_goal[1] - rotation])
+            csv_writer.writerow([time.time(), m, rotation, to_goal[1] - rotation])
 
 
 finally:
