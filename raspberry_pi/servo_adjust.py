@@ -21,7 +21,7 @@ try:
     time.sleep(1)
 
 finally:
-    pi.hardware_PWM(13, 0, 0)
+    pi.hardware_PWM(12, 0, 0)
 
     for pin in range(0, 2):
         pi.write(DMUX_pin[pin], 0)
