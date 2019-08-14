@@ -180,7 +180,7 @@ try:
     t2.start()
 
 
-    with open(current_dir + '/' + filename + f'.csv', 'w') as c:
+    with open(current_dir + '/' + filename + '.csv', 'w') as c:
         csv_writer = csv.writer(c, lineterminator='\n')
         while 1:
             pi.hardware_PWM(pinL, 50, int(dL))
