@@ -1,4 +1,6 @@
-from smbus import SMBus
+# -*- coding: utf-8 -*-
+#!usr/bin/python
+
 import time
 
 __all__ = ['readData']
