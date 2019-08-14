@@ -22,10 +22,11 @@ class capture:
         self.camera.capture(stream, 'jpeg')
         data = np.fromstring(stream.getvalue(), dtype=np.uint8)
         image = cv2.imdecode(data, 1)
+        self.stream = image
         return image
 
     def flush(self):
-        cv2.imwrite(current_dir + 'capture.png', self.stream)
+        cv2.imwrite(current_dir + '/capture.png', self.stream)
 
     def __del__(self):
         self.camera.stop_preview()
