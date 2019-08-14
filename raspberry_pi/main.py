@@ -14,12 +14,12 @@ import math
 import threading
 
 time_range = 5
-mpu_break_time=120                          #加速度が落ち着いている判定の判定時間
-bme_break_time=30                           #キャリア判定からの経過時間による着陸判定用
-extent=0.02                                 #MPUの誤差込みの判定にするための変数
-DMUX_pin=[11,9,10]                          #マルチプレクサの出力指定ピンA,B,C
-DMUX_out=[1,0,0]                            #出力ピン指定のHIGH,LOWデータ
-PWM_pin=12                                  #マルチプレクサ側PWMのピン
+mpu_break_time=120
+bme_break_time=30  #キャリア判定からの経過時間による着陸判定用
+extent=0.02    #MPUの誤差込みの判定にするための変数
+DMUX_pin=[11,9,10] #マルチプレクサの出力指定ピンA,B,C
+DMUX_out=[1,0,0]  #出力ピン指定のHIGH,LOWデータ
+PWM_pin=12  #マルチプレクサ側PWMのピン
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 pi = pigpio.pi()
@@ -50,6 +50,7 @@ try:
         count_mpu = 0
         start_t = time.time()
         while 1:
+            """
             accel3 = mpu.get_accel_data_lsb()
             g = (accel3[0]**2 + accel3[1]**2 + accel3[2]**2)**0.5
             if g <= 0.5:
@@ -60,11 +61,24 @@ try:
                 break
             elif time.time() - start_t >= mpu_break_time:
                 break
+            """
+            height_BME_40 = BME.readData()
+            print(height_BME)
+            if height_BME[0] >= 40: #meter
+                count_mpu +=1
+            else:
+                count_mpu = 0
+            if count_mpu >= count_BME:
+                break
+            elif time.time() - start_t >= mpu_break_time:
+                break
+            time.sleep(0.0007)
+
         release_t = time.time()
         time.sleep(2)
         while 1:
             height_BME = BME.readData()
-            row = [time.time() - start_t]
+            row = [time.time()]
             print(height_BME)
             row.extend(height_BME)
             if height_BME[0] <= 3: #meter
@@ -75,10 +89,10 @@ try:
             if count >= count_BME:
                 row.append("release parachute")
                 break
+            elif time.time() - release_t >= bme_break_time:
+                row.append("timeout")
+                break
             time.sleep(0.0007)
-            #elif time.time() - release_t >= bme_break_time:
-            #    row.append("timeout")
-            #    break
             csv_writer.writerow(row)
         pi.hardware_PWM(PWM_pin, 50, duty_release)
         time.sleep(1)
@@ -91,7 +105,7 @@ finally:
 ## multi_gps_homing
 
 #画像誘導に切り替える距離(km)
-cam_dis = 0.005
+cam_dis = 0.003
 forward_dis = 0.01  # 初めの直進距離(km)
 
 pinL = 13
@@ -111,7 +125,7 @@ for pin in range(0, 2):
 p = pid_controll.pid(0.004, 0.03, 0.0004)
 
 #goalの座標
-goal_lat, goal_long = 35.5545974, 139.6563162 #グラウンド
+goal_lat, goal_long = 40.1427210, 139.9874711 #本番用
 
 drift = -1.032555
 
@@ -244,7 +258,7 @@ try:
     URwC_thread.start()
     print('URwC start')
     pt = time.time()
-    
+
     while True:
         gyro = mpu.get_gyro_data_lsb()[2] + drift
         nt = time.time()
@@ -258,10 +272,10 @@ try:
         m1 = min([max([m, -1]), 1])
         dL, dR = 75000 + 12500 * (1 - m1), 75000 - 12500 * (1 + m1)
         print([m1, rotation])
-        
+
         pi.hardware_PWM(pinL, 50, int(dL))
         pi.hardware_PWM(pinR, 50, int(dR))
-        
+
 
 finally:
     URwC_flag = 0
