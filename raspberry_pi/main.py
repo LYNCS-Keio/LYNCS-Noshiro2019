@@ -4,6 +4,8 @@ from lib import rover_gps as GPS
 from lib import pid_controll
 from lib import BME280 as BME
 from lib import MPU6050
+from lib import camera
+from lib import capture
 import pigpio
 import time
 import csv
@@ -120,7 +122,8 @@ def gps_get():
         now = GPS.lat_long_measurement()
         if now[0] != None and now[1] != None:
             to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
-            print(to_goal[0])
+            print(to_goal[0])sudo pigpiod
+
             if flag == 0 and GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[0] >= forward_dis:
                 lock.acquire()
                 to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
@@ -193,5 +196,74 @@ try:
 
 
 finally:
+    pi.hardware_PWM(pinL, 0, 0)
+    pi.hardware_PWM(pinR, 0, 0)
+
+
+##tv_homing
+
+AoV = 54  # angle of view
+height = 240
+width = 320
+rotation = 0
+drift = -1.092913
+cam_interval = 1.5
+rotation_lock = threading.Lock()
+
+URwC_flag = 1
+
+DMUX_pin = [11, 9, 1
+pi = pigpio.pi()0]  # マルチプレクサの出力指定ピンA,B,C
+DMUX_out = [0, 0, 0]  # 出力ピン指定のHIGH,LOWデータ
+for pin in range(0, 2):
+    pi.set_mode(DMUX_pin[pin], pigpio.OUTPUT)
+    pi.write(DMUX_pin[pin], DMUX_out[pin])
+pi.set_mode(pinL, pigpio.OUTPUT)
+pi.set_mode(pinR, pigpio.OUTPUT)
+
+mpu = MPU6050.MPU6050(0x68)
+
+def update_rotation_with_cam():
+    global rotation
+    cap = capture.capture()
+    cam = camera.CamAnalysis()
+    while URwC_flag == 1:
+        stream = cap.cap()
+        cam.morphology_extract(stream)
+        cam.save_all_outputs()
+        coord = cam.contour_find()
+
+        conX = ((coord[0] - width / 2) / (width / 2)) / math.sqrt(3)
+        rotation_lock.acquire()
+        rotation = math.degrees(math.atan(-conX))
+        rotation_lock.release()
+        print (coord[0], rotation)
+
+try:
+    URwC_thread = threading.Thread(target=update_rotation_with_cam)
+    URwC_thread.start()
+    print('URwC start')
+    pt = time.time()
+    
+    while True:
+        gyro = mpu.get_gyro_data_lsb()[2] + drift
+        nt = time.time()
+        dt = nt - pt
+        pt = nt
+        rotation_lock.acquire()
+        rotation += gyro * dt
+        rotation_lock.release()
+
+        m = p.update_pid(0, rotation, dt)
+        m1 = min([max([m, -1]), 1])
+        dL, dR = 75000 + 12500 * (1 - m1), 75000 - 12500 * (1 + m1)
+        print([m1, rotation])
+        
+        pi.hardware_PWM(pinL, 50, int(dL))
+        pi.hardware_PWM(pinR, 50, int(dR))
+        
+
+finally:
+    URwC_flag = 0
     pi.hardware_PWM(pinL, 0, 0)
     pi.hardware_PWM(pinR, 0, 0)
