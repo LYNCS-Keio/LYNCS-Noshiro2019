@@ -21,6 +21,7 @@ class HCSR04:
         GPIO.setwarnings(False)
         GPIO.setup(self.trig, GPIO.OUT)
         GPIO.setup(self.echo, GPIO.IN)
+        print ("HCSR04 init")
 
 
     def __enter__(self):
@@ -55,7 +56,7 @@ class HCSR04:
 
 if __name__ == "__main__":
     args = sys.argv
-    print args[1]
+    print (args[1])
     with HCSR04(int(args[1]), int(args[2])) as hcs:
         while True:
             print(hcs.readData(34300))
