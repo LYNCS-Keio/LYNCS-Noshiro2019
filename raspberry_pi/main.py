@@ -6,6 +6,7 @@ from lib import BME280 as BME
 from lib import MPU6050
 from lib import camera
 from lib import capture
+from lib import RoverFuncs
 import pigpio
 import time
 import csv
