@@ -173,7 +173,7 @@ try:
                 pi.hardware_PWM(pinL, 50, 75000)
                 pi.hardware_PWM(pinR, 50, 75000)
                 break
-            csv_writer.writerow([time.time(), m, rotation, to_goal[1] - rotation])
+            csv_writer.writerow([time.time(), m, rotation, to_goal[1] - rotation, to_goal[0]])
 finally:
     pi.hardware_PWM(pinL, 0, 0)
     pi.hardware_PWM(pinR, 0, 0)
