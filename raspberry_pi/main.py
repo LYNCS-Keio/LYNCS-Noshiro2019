@@ -238,7 +238,7 @@ pi.set_mode(pinR, pigpio.OUTPUT)
 mpu = MPU6050.MPU6050(0x68)
 
 def update_rotation_with_cam():
-    global rotation
+    global rotation, area
     cap = capture.capture()
     cam = camera.CamAnalysis()
     while URwC_flag == 1:
@@ -246,6 +246,7 @@ def update_rotation_with_cam():
         cam.morphology_extract(stream)
         cam.save_all_outputs()
         coord = cam.contour_find()
+        area = coord[2]
 
         conX = ((coord[0] - width / 2) / (width / 2)) / math.sqrt(3)
         rotation_lock.acquire()
@@ -258,8 +259,32 @@ try:
     URwC_thread.start()
     print('URwC start')
     pt = time.time()
+    forward = 1
+    count_spin = 0
 
     while True:
+        if URwC_flag == 0 and (rotation <= 0.5 and rotation>= -0.5):
+            URwC_flag = 1
+            pi.hardware_PWM(pinL, 50, 75000)
+            pi.hardware_PWM(pinR, 50, 75000)
+            time.sleep(2)
+            forward = 1
+
+        if area <= 300 and forward == 1:
+            rotation = -45
+            URwC_flag = 0
+            forward = 0
+            count_spin += 1
+            if count_spin == 9:
+                rotation = 0
+                forward = 1
+                count_spin = 0
+                URwC_flag = 1
+        else:
+            count_spin == 0
+        if area >= 65280:
+            URwC_flag = 0
+            break
         gyro = mpu.get_gyro_data_lsb()[2] + drift
         nt = time.time()
         dt = nt - pt
@@ -270,7 +295,7 @@ try:
 
         m = p.update_pid(0, rotation, dt)
         m1 = min([max([m, -1]), 1])
-        dL, dR = 75000 + 12500 * (1 - m1), 75000 - 12500 * (1 + m1)
+        dL, dR = 75000 + 12500 * (forward - m1), 75000 - 12500 * (forward + m1)
         print([m1, rotation])
 
         pi.hardware_PWM(pinL, 50, int(dL))
