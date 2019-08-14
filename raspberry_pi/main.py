@@ -16,10 +16,10 @@ import threading
 
 time_range = 5
 release_timeout =120
-bme_timeout=30                           #キャリア判定からの経過時間による着陸判定用
+bme_timeout=30                              #キャリア判定からの経過時間による着陸判定用
 extent=0.02                                 #MPUの誤差込みの判定にするための変数
-DMUX_pin=[11,9,10]                          #マルチプレクサの出力指定ピンA,B,C
-DMUX_out=[1,0,0]                            #出力ピン指定のHIGH,LOWデータ
+DMUX_pin = [11, 9, 10]                      #マルチプレクサの出力指定ピンA,B,C
+DMUX_out = [1, 0, 0]                        #出力ピン指定のHIGH,LOWデータ
 PWM_pin=12                                  #マルチプレクサ側PWMのピン
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -44,10 +44,10 @@ bme_judge = BME_Judge()
 
 try:
     index = 0
-    filename = 'landinglog' + '%04d' % index
+    filename = 'cameralog' + '%04d' % index
     while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
         index += 1
-        filename = 'landinglog' + '%04d' % index
+        filename = 'cameralog' + '%04d' % index
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
         csv_writer = csv.writer(c, lineterminator='\n')
         start_t = time.time()
@@ -70,7 +70,7 @@ try:
                 row.append(count)
             else:
                 count = 0
-            if count >= count_BME:
+            if count >= limit_bme:
                 row.append("release parachute")
                 break
             elif time.time() - release_time >= bme_timeout:
@@ -98,14 +98,6 @@ pinR = 12
 m = 0
 
 lock = threading.Lock()
-
-DMUX_pin=[11,9,10]                      #マルチプレクサの出力指定ピンA,B,C
-DMUX_out = [1, 0, 0]                    #出力ピン指定のHIGH,LOWデータ
-for pin in range(0, 2):
-    pi.set_mode(DMUX_pin[pin], pigpio.OUTPUT)
-    pi.write(DMUX_pin[pin], DMUX_out[pin])
-
-
 p = pid_controll.pid(0.004, 0.03, 0.0004)
 
 #goalの座標
@@ -133,13 +125,12 @@ def gps_get():
             if to_goal[0] < cam_dis:
                 break
 
-
 def gyro_get():
     global to_goal, rotation, dL, dR, m
     pt = time.time()
     while 1:
         #dutyLを変える
-        gyro = MPU.get_gyro_data_lsb()[2] + drift
+        gyro = mpu.get_gyro_data_lsb()[2] + drift
         nt = time.time()
         dt = nt - pt
         pt = nt
@@ -153,8 +144,6 @@ def gyro_get():
         if to_goal[0] < cam_dis:
             break
 
-
-#着地
 while 1:
     pre = GPS.lat_long_measurement()
     if pre[0] != None:
@@ -167,11 +156,9 @@ try:
         index += 1
         filename = 'gps_hom_log' + '%04d' % index
 
-
     DMUX_out = [0,0,0]
     for pin in range(0, 2):
         pi.write(DMUX_pin[pin], DMUX_out[pin])
-    MPU = MPU6050.MPU6050(0x68)
     pi.set_mode(pinL, pigpio.OUTPUT)
     pi.set_mode(pinR, pigpio.OUTPUT)
     to_goal , rotation = [1, 0] , 0
@@ -179,7 +166,6 @@ try:
     t2 = threading.Thread(target = gyro_get)
     t1.start()
     t2.start()
-
 
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
         csv_writer = csv.writer(c, lineterminator='\n')
@@ -191,11 +177,10 @@ try:
                 pi.hardware_PWM(pinR, 50, 75000)
                 break
             csv_writer.writerow([time.time(), m, rotation, to_goal[1] - rotation])
-
-
 finally:
     pi.hardware_PWM(pinL, 0, 0)
     pi.hardware_PWM(pinR, 0, 0)
+
 
 
 ##tv_homing
@@ -204,21 +189,12 @@ AoV = 54  # angle of view
 height = 240
 width = 320
 rotation = 0
-drift = -1.092913
 cam_interval = 1.5
-rotation_lock = threading.Lock()
+area = 400
+lock = threading.Lock()
 
 URwC_flag = 1
 
-DMUX_pin = [11, 9, 10]  # マルチプレクサの出力指定ピンA,B,C
-DMUX_out = [0, 0, 0]  # 出力ピン指定のHIGH,LOWデータ
-for pin in range(0, 2):
-    pi.set_mode(DMUX_pin[pin], pigpio.OUTPUT)
-    pi.write(DMUX_pin[pin], DMUX_out[pin])
-pi.set_mode(pinL, pigpio.OUTPUT)
-pi.set_mode(pinR, pigpio.OUTPUT)
-
-mpu = MPU6050.MPU6050(0x68)
 
 def update_rotation_with_cam():
     global rotation, area
@@ -229,24 +205,34 @@ def update_rotation_with_cam():
         cam.morphology_extract(stream)
         cam.save_all_outputs()
         coord = cam.contour_find()
-        area = coord[2]
 
         conX = ((coord[0] - width / 2) / (width / 2)) / math.sqrt(3)
-        rotation_lock.acquire()
+
+        lock.acquire()
         rotation = math.degrees(math.atan(-conX))
-        rotation_lock.release()
-        print (coord[0], rotation)
+        area = coord[2]
+        lock.release()
+
+        #print (coord[0], rotation)
 
 try:
+    index = 0
+    filename = 'cameralog' + '%04d' % index
+    while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
+        index += 1
+        filename = 'cameralog' + '%04d' % index
+    with open(current_dir + '/' + filename + '.csv', 'w') as c:
+        csv_writer = csv.writer(c, lineterminator='\n')
+
     URwC_thread = threading.Thread(target=update_rotation_with_cam)
     URwC_thread.start()
     print('URwC start')
     pt = time.time()
-    forward = 1
+    forward = 0
     count_spin = 0
 
     while True:
-        if URwC_flag == 0 and (rotation <= 0.5 and rotation>= -0.5):
+        if URwC_flag == 0 and (rotation <= 0.5 and rotation >= -0.5):
             URwC_flag = 1
             pi.hardware_PWM(pinL, 50, 75000)
             pi.hardware_PWM(pinR, 50, 75000)
@@ -268,13 +254,14 @@ try:
         if area >= 65280:
             URwC_flag = 0
             break
+
         gyro = mpu.get_gyro_data_lsb()[2] + drift
         nt = time.time()
         dt = nt - pt
         pt = nt
-        rotation_lock.acquire()
+        lock.acquire()
         rotation += gyro * dt
-        rotation_lock.release()
+        lock.release()
 
         m = p.update_pid(0, rotation, dt)
         m1 = min([max([m, -1]), 1])
@@ -283,6 +270,7 @@ try:
 
         pi.hardware_PWM(pinL, 50, int(dL))
         pi.hardware_PWM(pinR, 50, int(dR))
+        csv_writer.writerow([time.time(), rotation, area])
 
 
 finally:
