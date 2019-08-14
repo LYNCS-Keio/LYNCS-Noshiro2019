@@ -38,7 +38,7 @@ class BME_Judge():
                 self.count_bme_l +=1
             else:
                 self.count_bme_t = 0
-            if self.count_bme_t >= limit_bme:
+            if self.count_bme_t >= _limit_bme:
                 self.reach_gnd = True
         return self.reach_gnd
         
