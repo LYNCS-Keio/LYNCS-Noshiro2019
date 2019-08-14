@@ -31,7 +31,7 @@ class BME_Judge():
                 self.reach_top = True
         return self.reach_top
     
-    def is_reached_ground(self,height):
+    def is_reached_gnd(self,height):
         if not self.reach_gnd:
             ## _height_highが_limit_bme回以上続くと地上であると判定する.
             if height <= _height_low:
