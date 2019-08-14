@@ -40,7 +40,7 @@ count = 0
 count_bme = 0
 limit_bme = 10                              #BMEがn回範囲内になったらbreak
 
-bme_judge = BME_Judge()
+bme_judge = RoverFuncs.BME_Judge()
 
 try:
     index = 0
