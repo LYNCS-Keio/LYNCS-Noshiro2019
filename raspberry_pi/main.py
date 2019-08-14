@@ -40,6 +40,8 @@ count = 0
 count_bme = 0
 limit_bme = 10                              #BMEがn回範囲内になったらbreak
 
+bme_judge = BME_Judge()
+
 try:
     index = 0
     filename = 'landinglog' + '%04d' % index
@@ -50,28 +52,10 @@ try:
         csv_writer = csv.writer(c, lineterminator='\n')
         start_t = time.time()
         while 1:
-            """
-            accel3 = mpu.get_accel_data_lsb()
-            g = (accel3[0]**2 + accel3[1]**2 + accel3[2]**2)**0.5
-            if g <= 0.5:
-                count_mpu += 1
-            else:
-                count_mpu = 0
-            if count_mpu >= 10:
-                break
-            elif time.time() - start_t >= mpu_break_time:
-                break
-            """
             height_BME = BME.readData()
             print(height_BME)
-            if height_BME[0] >= 40: #meter
-                count_bme += 1
-            else:
-                count_bme = 0
-            if count_bme >= limit_bme:
-                break
-            elif time.time() - start_t >= release_timeout:
-                break
+            break if bme_judge.is_reached_top(height_BME[0])
+            break if time.time() - start_t >= release_timeout
             time.sleep(0.0007)
 
         release_time = time.time()
