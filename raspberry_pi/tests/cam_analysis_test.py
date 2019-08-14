@@ -10,7 +10,7 @@ class TestCamAnalysis(unittest.TestCase):
         cam = camera.CamAnalysis()
         cam.morphology_extract(stream)
         coord = cam.contour_find()
-        self.assertTrue((800 < coord[0] and coord[0] < 1100) and (400 < coord[1] and coord[1] < 700))
+        self.assertTrue((500 < coord[0] and coord[0] < 700) and (100 < coord[1] and coord[1] < 300))
 
 
 if __name__ == "__main__":
