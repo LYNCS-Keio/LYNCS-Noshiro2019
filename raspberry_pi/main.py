@@ -120,7 +120,6 @@ goal_lat, goal_long = 40.1427210, 139.9874711 #本番用
 
 drift = -1.032555
 
-
 def gps_get():
     global to_goal, rotation, pre
     flag = 0
@@ -193,7 +192,6 @@ try:
                 pi.hardware_PWM(pinR, 50, 75000)
                 break
             csv_writer.writerow([time.time(), m, rotation, to_goal[1] - rotation])
-            
 finally:
     pi.hardware_PWM(pinL, 0, 0)
     pi.hardware_PWM(pinR, 0, 0)
