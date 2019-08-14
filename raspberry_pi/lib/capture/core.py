@@ -25,13 +25,8 @@ class capture:
         self.stream = image
         return image
 
-<<<<<<< HEAD
-    def flush(self, stream):
-        cv2.imwrite(current_dir + '/capture.png', stream)
-=======
     def flush(self):
         cv2.imwrite(current_dir + '/capture.png', self.stream)
->>>>>>> b3a028b6c6113a48223a462cac9c194468b7e658
 
     def __del__(self):
         self.camera.stop_preview()
