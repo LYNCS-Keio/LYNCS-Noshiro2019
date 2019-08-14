@@ -113,14 +113,6 @@ pinR = 12
 m = 0
 
 lock = threading.Lock()
-
-DMUX_pin=[11,9,10]                      #マルチプレクサの出力指定ピンA,B,C
-DMUX_out = [1, 0, 0]                    #出力ピン指定のHIGH,LOWデータ
-for pin in range(0, 2):
-    pi.set_mode(DMUX_pin[pin], pigpio.OUTPUT)
-    pi.write(DMUX_pin[pin], DMUX_out[pin])
-
-
 p = pid_controll.pid(0.004, 0.03, 0.0004)
 
 #goalの座標
@@ -148,13 +140,12 @@ def gps_get():
             if to_goal[0] < cam_dis:
                 break
 
-
 def gyro_get():
     global to_goal, rotation, dL, dR, m
     pt = time.time()
     while 1:
         #dutyLを変える
-        gyro = MPU.get_gyro_data_lsb()[2] + drift
+        gyro = mpu.get_gyro_data_lsb()[2] + drift
         nt = time.time()
         dt = nt - pt
         pt = nt
@@ -168,8 +159,6 @@ def gyro_get():
         if to_goal[0] < cam_dis:
             break
 
-
-#着地
 while 1:
     pre = GPS.lat_long_measurement()
     if pre[0] != None:
@@ -182,11 +171,9 @@ try:
         index += 1
         filename = 'gps_hom_log' + '%04d' % index
 
-
     DMUX_out = [0,0,0]
     for pin in range(0, 2):
         pi.write(DMUX_pin[pin], DMUX_out[pin])
-    MPU = MPU6050.MPU6050(0x68)
     pi.set_mode(pinL, pigpio.OUTPUT)
     pi.set_mode(pinR, pigpio.OUTPUT)
     to_goal , rotation = [1, 0] , 0
@@ -194,7 +181,6 @@ try:
     t2 = threading.Thread(target = gyro_get)
     t1.start()
     t2.start()
-
 
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
         csv_writer = csv.writer(c, lineterminator='\n')
@@ -206,8 +192,7 @@ try:
                 pi.hardware_PWM(pinR, 50, 75000)
                 break
             csv_writer.writerow([time.time(), m, rotation, to_goal[1] - rotation])
-
-
+            
 finally:
     pi.hardware_PWM(pinL, 0, 0)
     pi.hardware_PWM(pinR, 0, 0)
