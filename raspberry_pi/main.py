@@ -120,6 +120,7 @@ goal_lat, goal_long = 40.1427210, 139.9874711 #本番用
 
 drift = -1.032555
 
+
 def gps_get():
     global to_goal, rotation, pre
     flag = 0
@@ -198,27 +199,18 @@ finally:
     pi.hardware_PWM(pinR, 0, 0)
 
 
+
 ##tv_homing
 
 AoV = 54  # angle of view
 height = 240
 width = 320
 rotation = 0
-drift = -1.092913
 cam_interval = 1.5
-rotation_lock = threading.Lock()
+lock = threading.Lock()
 
 URwC_flag = 1
 
-DMUX_pin = [11, 9, 10]  # マルチプレクサの出力指定ピンA,B,C
-DMUX_out = [0, 0, 0]  # 出力ピン指定のHIGH,LOWデータ
-for pin in range(0, 2):
-    pi.set_mode(DMUX_pin[pin], pigpio.OUTPUT)
-    pi.write(DMUX_pin[pin], DMUX_out[pin])
-pi.set_mode(pinL, pigpio.OUTPUT)
-pi.set_mode(pinR, pigpio.OUTPUT)
-
-mpu = MPU6050.MPU6050(0x68)
 
 def update_rotation_with_cam():
     global rotation
@@ -231,10 +223,12 @@ def update_rotation_with_cam():
         coord = cam.contour_find()
 
         conX = ((coord[0] - width / 2) / (width / 2)) / math.sqrt(3)
-        rotation_lock.acquire()
+
+        lock.acquire()
         rotation = math.degrees(math.atan(-conX))
-        rotation_lock.release()
-        print (coord[0], rotation)
+        lock.release()
+
+        #print (coord[0], rotation)
 
 try:
     URwC_thread = threading.Thread(target=update_rotation_with_cam)
@@ -247,9 +241,9 @@ try:
         nt = time.time()
         dt = nt - pt
         pt = nt
-        rotation_lock.acquire()
+        lock.acquire()
         rotation += gyro * dt
-        rotation_lock.release()
+        lock.release()
 
         m = p.update_pid(0, rotation, dt)
         m1 = min([max([m, -1]), 1])
