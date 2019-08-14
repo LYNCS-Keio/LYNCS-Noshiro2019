@@ -55,7 +55,7 @@ try:
         index += 1
         filename = 'landinglog' + '%04d' % index
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
-        f = csv.writer(c, lineterminator='\n')
+        csv_writer = csv.writer(c, lineterminator='\n')
 
         count_mpu = 0
 
@@ -91,28 +91,10 @@ try:
             #elif time.time() - release_t >= bme_break_time:
             #    row.append("timeout")
             #    break
-            f.writerow(row)
-
-            '''
-            GPIO.output(trigger, True)
-            time.sleep(0.000010)
-            GPIO.output(trigger, False)
-
-            GPIO.wait_for_edge(echo, GPIO.RISING, timeout=10)
-            time_1 = time.time()
-            GPIO.wait_for_edge(echo, GPIO.FALLING, timeout=15)
-            delta = time.time() - time_1 + 0.0002
-            distance = (delta * sound_velocity) / 2
-            print(distance)
-            if (time.time()-now_t > break_time) or ((70 <= distance) and (distance <= 200)):
-                break
-            time.sleep(0.01)
-            '''
-
+            csv_writer.writerow(row)
         pi.hardware_PWM(PWM_pin, 50, duty_release)
         time.sleep(1)
-        f.writerow(row)
-
+        csv_writer.writerow(row)
 finally:
     pi.hardware_PWM(PWM_pin, 0, 0)
     for pin in range(0, 2):
