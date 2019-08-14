@@ -54,8 +54,10 @@ try:
         while 1:
             height_BME = BME.readData()
             print(height_BME)
-            break if bme_judge.is_reached_top(height_BME[0])
-            break if time.time() - start_t >= release_timeout
+            if bme_judge.is_reached_top(height_BME[0]):
+                break
+            elif time.time() - start_t >= release_timeout:
+                break
             time.sleep(0.0007)
 
         release_time = time.time()
@@ -65,12 +67,7 @@ try:
             row = [time.time()]
             print(height_BME)
             row.extend(height_BME)
-            if height_BME[0] <= 3: #meter
-                count +=1
-                row.append(count)
-            else:
-                count = 0
-            if count >= limit_bme:
+            if bme_judge.is_reached_gnd(height_BME[0]):
                 row.append("release parachute")
                 break
             elif time.time() - release_time >= bme_timeout:
