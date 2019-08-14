@@ -38,6 +38,17 @@ class servo:
 
 if __name__ == "__main__":
     args = sys.argv
+    DMUX_pin=[11,9,10]
+    DMUX_out = [1, 0, 0]
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(DMUX_pin[0], GPIO.OUT)
+    GPIO.setup(DMUX_pin[1], GPIO.OUT)
+    GPIO.setup(DMUX_pin[2], GPIO.OUT)
+
+    GPIO.output(DMUX_pin[0], DMUX_out[0])
+    GPIO.output(DMUX_pin[1], DMUX_out[1])
+    GPIO.output(DMUX_pin[2], DMUX_out[2])
     with servo(int(args[1])) as sv:
         while True:
             sv.rotate(float(args[2]))

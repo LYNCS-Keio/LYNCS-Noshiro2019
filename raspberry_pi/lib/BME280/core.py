@@ -1,4 +1,5 @@
-from smbus2 import SMBus
+from smbus import SMBus
+import time
 
 __all__ = ['readData']
 
@@ -80,7 +81,7 @@ def readData():
     recover_P = compensate_P(pres_raw)
     #recover_H = compensate_H(hum_raw)
     mesure_high = ((((sea_pressure/recover_P)**(1/5.257)) - 1.) * (recover_T + 273.15)) / 0.0065
-    return mesure_high
+    return [mesure_high, recover_P, recover_T]
 
 
 def compensate_P(adc_P):
@@ -140,7 +141,7 @@ def setup():
     osrs_p = 1  #Pressure oversampling x 1
     osrs_h = 1  #Humidity oversampling x 1
     mode = 3  #Normal mode
-    t_sb = 5  #Tstandby 1000ms
+    t_sb = 0  #Tstandby 1000ms
     filter = 0  #Filter off
     spi3w_en = 0  #3-wire SPI Disable
 
@@ -158,7 +159,9 @@ get_calib_param()
 
 if __name__ == '__main__':
     try:
-        print(readData())
+        while True:
+            print(readData())
+            time.sleep(0.01)
 
     except KeyboardInterrupt:
         pass
