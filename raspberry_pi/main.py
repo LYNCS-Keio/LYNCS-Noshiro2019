@@ -41,10 +41,10 @@ limit_bme = 10                              #BMEがn回範囲内になったらb
 
 try:
     index = 0
-    filename = 'landinglog' + '%04d' % index
+    filename = 'cameralog' + '%04d' % index
     while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
         index += 1
-        filename = 'landinglog' + '%04d' % index
+        filename = 'cameralog' + '%04d' % index
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
         csv_writer = csv.writer(c, lineterminator='\n')
         start_t = time.time()
@@ -231,6 +231,14 @@ def update_rotation_with_cam():
         #print (coord[0], rotation)
 
 try:
+    index = 0
+    filename = 'cameralog' + '%04d' % index
+    while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
+        index += 1
+        filename = 'cameralog' + '%04d' % index
+    with open(current_dir + '/' + filename + '.csv', 'w') as c:
+        csv_writer = csv.writer(c, lineterminator='\n')
+
     URwC_thread = threading.Thread(target=update_rotation_with_cam)
     URwC_thread.start()
     print('URwC start')
@@ -277,6 +285,7 @@ try:
 
         pi.hardware_PWM(pinL, 50, int(dL))
         pi.hardware_PWM(pinR, 50, int(dR))
+        csv_writer.writerow([time.time(), rotation, area])
 
 
 finally:
