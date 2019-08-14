@@ -30,8 +30,6 @@ for pin in range(0, 2):
 pi.set_mode(pinL, pigpio.OUTPUT)
 pi.set_mode(pinR, pigpio.OUTPUT)
 
-pt = time.time()
-
 p = pid_controll.pid(0.004, 0.03, 0.0004)
 mpu = MPU6050.MPU6050(0x68)
 
@@ -51,9 +49,6 @@ def update_rotation_with_cam():
         rotation = math.degrees(math.atan(-conX))
         rotation_lock.release()
         print (coord[0], rotation)
-    del cap, cam
-
-
 
 try:
     URwC_thread = threading.Thread(target=update_rotation_with_cam)
