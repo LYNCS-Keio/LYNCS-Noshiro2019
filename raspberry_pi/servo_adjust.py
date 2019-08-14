@@ -17,7 +17,7 @@ try:
     args = sys.argv
     pi.set_mode(13, pigpio.OUTPUT)
 
-    pi.hardware_PWM(13, 50, int(sys[1]))
+    pi.hardware_PWM(13, 50, int(args[1]))
     time.sleep(1)
 
 finally:
