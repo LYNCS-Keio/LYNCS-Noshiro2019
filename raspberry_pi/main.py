@@ -243,7 +243,7 @@ try:
     URwC_thread.start()
     print('URwC start')
     pt = time.time()
-    forward = 0
+    forward = 1
     count_spin = 0
 
     while True:
