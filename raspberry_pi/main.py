@@ -24,8 +24,8 @@ PWM_pin=12                                  #マルチプレクサ側PWMのピ�
 current_dir = os.path.dirname(os.path.abspath(__file__))
 pi = pigpio.pi()
 pi.set_mode(PWM_pin, pigpio.OUTPUT)
-duty_lock = 64000
-duty_release = 57500
+duty_lock = 85000
+duty_release = 78500
 
 mpu = MPU6050.MPU6050(0x68)
 
