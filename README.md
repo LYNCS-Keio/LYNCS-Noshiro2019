@@ -4,6 +4,14 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/LYNCS-Keio/LYNCS-Noshiro2019.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/LYNCS-Keio/LYNCS-Noshiro2019/context:python)
 
 能代宇宙イベントのためのCanSatプログラム  
+
+```bash
+cd raspberry_pi
+```
+```bash
+python3 main.py
+```
+で実行できる。
 # Dependencies
 see [dependency graph](https://github.com/LYNCS-Keio/LYNCS-Noshiro2019/network/dependencies)
 # Installation
