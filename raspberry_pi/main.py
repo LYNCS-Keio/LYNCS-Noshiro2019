@@ -48,19 +48,7 @@ try:
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
         csv_writer = csv.writer(c, lineterminator='\n')
         start_t = time.time()
-        while 1:
-            """
-            accel3 = mpu.get_accel_data_lsb()
-            g = (accel3[0]**2 + accel3[1]**2 + accel3[2]**2)**0.5
-            if g <= 0.5:
-                count_mpu += 1
-            else:
-                count_mpu = 0
-            if count_mpu >= 10:
-                break
-            elif time.time() - start_t >= mpu_break_time:
-                break
-            """
+        while True:
             height_BME = BME.readData()
             print(height_BME)
             if height_BME[0] >= 40: #meter
@@ -75,7 +63,7 @@ try:
 
         release_time = time.time()
         time.sleep(2)
-        while 1:
+        while True:
             height_BME = BME.readData()
             row = [time.time()]
             print(height_BME)
@@ -123,7 +111,7 @@ drift = -1.032555
 def gps_get():
     global to_goal, rotation, pre
     flag = 0
-    while 1:
+    while True:
         now = GPS.lat_long_measurement()
         if now[0] != None and now[1] != None:
             to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
@@ -184,7 +172,7 @@ try:
 
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
         csv_writer = csv.writer(c, lineterminator='\n')
-        while 1:
+        while True:
             pi.hardware_PWM(pinL, 50, int(dL))
             pi.hardware_PWM(pinR, 50, int(dR))
             if to_goal[0] < cam_dis:
