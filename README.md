@@ -8,6 +8,10 @@
 ```bash
 cd raspberry_pi
 ```
+
+```bash
+sudo pigpio
+```
 ```bash
 python3 main.py
 ```
