@@ -9,7 +9,7 @@ pressure_sum = 0
 try:
     while True:
         index += 1
-        pressure_sum += core.readData()
+        pressure_sum += core.readData()[1]
         time.sleep(0.001)
 
 finally:
