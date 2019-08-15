@@ -15,7 +15,7 @@ try:
         pi.write(DMUX_pin[pin], DMUX_out[pin])
 
     args = sys.argv
-    pi.set_mode(13, pigpio.OUTPUT)
+    pi.set_mode(12, pigpio.OUTPUT)
 
     pi.hardware_PWM(12, 50, int(args[1]))
     time.sleep(1)
