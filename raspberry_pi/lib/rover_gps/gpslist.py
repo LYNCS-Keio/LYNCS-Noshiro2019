@@ -4,7 +4,6 @@ import csv
 import os
 import time
 
-pos = [None, None]
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 index = 0

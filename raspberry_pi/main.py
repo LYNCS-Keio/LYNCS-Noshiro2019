@@ -25,8 +25,8 @@ PWM_pin=12                                  #マルチプレクサ側PWMのピ�
 current_dir = os.path.dirname(os.path.abspath(__file__))
 pi = pigpio.pi()
 pi.set_mode(PWM_pin, pigpio.OUTPUT)
-duty_lock = 68500
-duty_release = 62500
+duty_lock = 85000
+duty_release = 78500
 
 mpu = MPU6050.MPU6050(0x68)
 
@@ -41,7 +41,6 @@ count_bme = 0
 limit_bme = 10                              #BMEがn回範囲内になったらbreak
 
 bme_judge = RoverFuncs.BME_Judge()
-
 try:
     index = 0
     filename = 'cameralog' + '%04d' % index
@@ -62,7 +61,7 @@ try:
 
         release_time = time.time()
         time.sleep(2)
-        while 1:
+        while True:
             height_BME = BME.readData()
             row = [time.time()]
             print(height_BME)
@@ -127,7 +126,7 @@ try:
 
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
         csv_writer = csv.writer(c, lineterminator='\n')
-        while 1:
+        while True:
             pi.hardware_PWM(pinL, 50, int(dL))
             pi.hardware_PWM(pinR, 50, int(dR))
             if to_goal[0] < cam_dis:
