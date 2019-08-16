@@ -39,6 +39,7 @@ count = 0
 count_bme = 0
 limit_bme = 10                              #BMEがn回範囲内になったらbreak
 
+
 while True:
     try:
         index = 0
@@ -126,6 +127,7 @@ goal_lat, goal_long = 40.1427210, 139.9874711 #本番用
 
 drift = -1.032555
 
+
 def gps_get():
     global to_goal, rotation, pre
     flag = 0
@@ -164,6 +166,7 @@ def gyro_get():
 
         if to_goal[0] < cam_dis:
             break
+            
 
 while True:
     pre = GPS.lat_long_measurement()
@@ -212,7 +215,6 @@ while True:
         pi.hardware_PWM(pinR, 0, 0)
 
 
-
 ##tv_homing
 
 AoV = 54  # angle of view
@@ -245,65 +247,72 @@ def update_rotation_with_cam():
 
         #print (coord[0], rotation)
 
-try:
-    index = 0
-    filename = 'cameralog' + '%04d' % index
-    while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
-        index += 1
+
+while True:
+    try:
+        index = 0
         filename = 'cameralog' + '%04d' % index
-    with open(current_dir + '/' + filename + '.csv', 'w') as c:
-        csv_writer = csv.writer(c, lineterminator='\n')
+        while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
+            index += 1
+            filename = 'cameralog' + '%04d' % index
+        with open(current_dir + '/' + filename + '.csv', 'w') as c:
+            csv_writer = csv.writer(c, lineterminator='\n')
 
-    URwC_thread = threading.Thread(target=update_rotation_with_cam)
-    URwC_thread.start()
-    print('URwC start')
-    pt = time.time()
-    forward = 1
-    count_spin = 0
+        URwC_thread = threading.Thread(target=update_rotation_with_cam)
+        URwC_thread.start()
+        print('URwC start')
+        pt = time.time()
+        forward = 1
+        count_spin = 0
 
-    while True:
-        if URwC_flag == 0 and (rotation <= 0.5 and rotation >= -0.5):
-            URwC_flag = 1
-            pi.hardware_PWM(pinL, 50, 75000)
-            pi.hardware_PWM(pinR, 50, 75000)
-            time.sleep(2)
-            forward = 1
-
-        if area <= 300 and forward == 1:
-            rotation = -45
-            URwC_flag = 0
-            forward = 0
-            count_spin += 1
-            if count_spin == 9:
-                rotation = 0
-                forward = 1
-                count_spin = 0
+        while True:
+            if URwC_flag == 0 and (rotation <= 0.5 and rotation >= -0.5):
                 URwC_flag = 1
-        else:
-            count_spin == 0
-        if area >= 65280:
-            URwC_flag = 0
-            break
+                pi.hardware_PWM(pinL, 50, 75000)
+                pi.hardware_PWM(pinR, 50, 75000)
+                time.sleep(2)
+                forward = 1
 
-        gyro = mpu.get_gyro_data_lsb()[2] + drift
-        nt = time.time()
-        dt = nt - pt
-        pt = nt
-        lock.acquire()
-        rotation += gyro * dt
-        lock.release()
+            if area <= 300 and forward == 1:
+                rotation = -45
+                URwC_flag = 0
+                forward = 0
+                count_spin += 1
+                if count_spin == 9:
+                    rotation = 0
+                    forward = 1
+                    count_spin = 0
+                    URwC_flag = 1
+            else:
+                count_spin == 0
+            if area >= 65280:
+                URwC_flag = 0
+                break
 
-        m = p.update_pid(0, rotation, dt)
-        m1 = min([max([m, -1]), 1])
-        dL, dR = 75000 + 12500 * (forward - m1), 75000 - 12500 * (forward + m1)
-        print([m1, rotation])
+            gyro = mpu.get_gyro_data_lsb()[2] + drift
+            nt = time.time()
+            dt = nt - pt
+            pt = nt
+            lock.acquire()
+            rotation += gyro * dt
+            lock.release()
 
-        pi.hardware_PWM(pinL, 50, int(dL))
-        pi.hardware_PWM(pinR, 50, int(dR))
-        csv_writer.writerow([time.time(), rotation, area])
+            m = p.update_pid(0, rotation, dt)
+            m1 = min([max([m, -1]), 1])
+            dL, dR = 75000 + 12500 * (forward - m1), 75000 - 12500 * (forward + m1)
+            print([m1, rotation])
 
+            pi.hardware_PWM(pinL, 50, int(dL))
+            pi.hardware_PWM(pinR, 50, int(dR))
+            csv_writer.writerow([time.time(), rotation, area])
 
-finally:
-    URwC_flag = 0
-    pi.hardware_PWM(pinL, 0, 0)
-    pi.hardware_PWM(pinR, 0, 0)
+    except:
+        pass
+
+    else:
+        break
+
+    finally:
+        URwC_flag = 0
+        pi.hardware_PWM(pinL, 0, 0)
+        pi.hardware_PWM(pinR, 0, 0)
