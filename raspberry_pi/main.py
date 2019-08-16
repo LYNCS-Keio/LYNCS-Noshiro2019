@@ -6,7 +6,8 @@ from lib import BME280 as BME
 from lib import MPU6050
 from lib import camera
 from lib import capture
-from lib import RoverFuncs
+from lib import RoverFuncs.BMEJudge as BMEJudge
+from lib import RoverFuncs.GPS_Funcs as GPS_Funcs
 import pigpio
 import time
 import csv
@@ -40,7 +41,7 @@ count = 0
 count_bme = 0
 limit_bme = 10                              #BMEがn回範囲内になったらbreak
 
-bme_judge = RoverFuncs.BME_Judge()
+bme_judge = BMEJudge.BME_Judge()
 try:
     index = 0
     filename = 'cameralog' + '%04d' % index
@@ -119,8 +120,8 @@ try:
     pi.set_mode(pinL, pigpio.OUTPUT)
     pi.set_mode(pinR, pigpio.OUTPUT)
     to_goal , rotation = [1, 0] , 0
-    t1 = threading.Thread(target = gps_get)
-    t2 = threading.Thread(target = gyro_get)
+    t1 = threading.Thread(target = GPS_Funcs.gps_get)
+    t2 = threading.Thread(target = GPS_Funcs.gyro_get)
     t1.start()
     t2.start()
 
