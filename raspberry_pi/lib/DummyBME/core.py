@@ -12,27 +12,27 @@ def writeReg(reg_address, data):
 def get_calib_param():
     pass
 
-_dammy_bme_count = 0
+_dummy_bme_count = 0
 _ascend_descend_flag = False    ## False::上昇 True::降下
-_dammy_gravity = 0.2
+_dummy_gravity = 0.2
 
 def readData():
-    global _dammy_bme_count
+    global _dummy_bme_count
     global _ascend_descend_flag
     global _gnd_flag
     
-    mesure_high = _dammy_bme_count
+    mesure_high = _dummy_bme_count
     
-    if _ascend_descend_flag:
-        _dammy_bme_count -= _dammy_gravity
+    if _ascend_descend_flag:˙
+        _dummy_bme_count -= _dummy_gravity
     
     if not _ascend_descend_flag:
-        _dammy_bme_count += _dammy_gravity
-        if _dammy_bme_count >= 50:
+        _dummy_bme_count += _dummy_gravity
+        if _dummy_bme_count >= 50:
              _ascend_descend_flag = True
     
-    if _dammy_bme_count < 0:
-        _dammy_bme_count = 0
+    if _dummy_bme_count < 0:
+        _dummy_bme_count = 0
     
     time.sleep(0.0005)
     return [mesure_high, 0, 0]
