@@ -36,5 +36,5 @@ if __name__ == '__main__':
     ca = capture()
     time.sleep(2)
     stream = ca.cap()
-    ca.flush(stream)
+    ca.flush()
     del ca
