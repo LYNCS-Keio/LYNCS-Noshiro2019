@@ -89,7 +89,7 @@ try:
     index = 0
     filename = 'gps_hom_log' + '%04d' % index
     while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
-        index += 1
+        index ++
         filename = 'gps_hom_log' + '%04d' % index
 
 

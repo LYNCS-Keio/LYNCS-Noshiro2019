@@ -6,6 +6,8 @@ from lib import BME280 as BME
 from lib import MPU6050
 from lib import camera
 from lib import capture
+from lib import RoverFuncs.BMEJudge as BMEJudge
+from lib import RoverFuncs.GPS_Funcs as GPS_Funcs
 import pigpio
 import time
 import csv
@@ -39,6 +41,7 @@ count = 0
 count_bme = 0
 limit_bme = 10                              #BMEがn回範囲内になったらbreak
 
+bme_judge = BMEJudge.BME_Judge()
 try:
     index = 0
     filename = 'cameralog' + '%04d' % index
@@ -48,14 +51,10 @@ try:
     with open(current_dir + '/' + filename + '.csv', 'w') as c:
         csv_writer = csv.writer(c, lineterminator='\n')
         start_t = time.time()
-        while True:
+        while 1:
             height_BME = BME.readData()
             print(height_BME)
-            if height_BME[0] >= 40: #meter
-                count_bme += 1
-            else:
-                count_bme = 0
-            if count_bme >= limit_bme:
+            if bme_judge.is_reached_top(height_BME[0]):
                 break
             elif time.time() - start_t >= release_timeout:
                 break
@@ -68,12 +67,7 @@ try:
             row = [time.time()]
             print(height_BME)
             row.extend(height_BME)
-            if height_BME[0] <= 3: #meter
-                count +=1
-                row.append(count)
-            else:
-                count = 0
-            if count >= limit_bme:
+            if bme_judge.is_reached_gnd(height_BME[0]):
                 row.append("release parachute")
                 break
             elif time.time() - release_time >= bme_timeout:
@@ -108,45 +102,6 @@ goal_lat, goal_long = 40.1427210, 139.9874711 #本番用
 
 drift = -1.032555
 
-def gps_get():
-    global to_goal, rotation, pre
-    flag = 0
-    while True:
-        now = GPS.lat_long_measurement()
-        if now[0] != None and now[1] != None:
-            to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
-            print(to_goal[0])
-
-            if flag == 0 and GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[0] >= forward_dis:
-                lock.acquire()
-                to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
-                rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1])
-                lock.release()
-                print("count!!!", now)
-                pre = now
-                flag = 1
-            if to_goal[0] < cam_dis:
-                break
-
-def gyro_get():
-    global to_goal, rotation, dL, dR, m
-    pt = time.time()
-    while 1:
-        #dutyLを変える
-        gyro = mpu.get_gyro_data_lsb()[2] + drift
-        nt = time.time()
-        dt = nt - pt
-        pt = nt
-        rotation += gyro * dt
-        m = p.update_pid(to_goal[1] , rotation, dt)
-        m1 = min([max([m, -1]), 1])
-        dL, dR = 75000 + 12500 * (1 - m1), 75000 - 12500 * (1 + m1)
-        print([m, rotation, to_goal[1] - rotation])
-        time.sleep(0.01)
-
-        if to_goal[0] < cam_dis:
-            break
-
 while 1:
     pre = GPS.lat_long_measurement()
     if pre[0] != None:
@@ -165,8 +120,8 @@ try:
     pi.set_mode(pinL, pigpio.OUTPUT)
     pi.set_mode(pinR, pigpio.OUTPUT)
     to_goal , rotation = [1, 0] , 0
-    t1 = threading.Thread(target = gps_get)
-    t2 = threading.Thread(target = gyro_get)
+    t1 = threading.Thread(target = GPS_Funcs.gps_get)
+    t2 = threading.Thread(target = GPS_Funcs.gyro_get)
     t1.start()
     t2.start()
 
@@ -231,7 +186,7 @@ try:
     URwC_thread.start()
     print('URwC start')
     pt = time.time()
-    forward = 1
+    forward = 0
     count_spin = 0
 
     while True:
