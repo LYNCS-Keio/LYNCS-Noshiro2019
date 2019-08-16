@@ -39,55 +39,73 @@ count = 0
 count_bme = 0
 limit_bme = 10                              #BMEがn回範囲内になったらbreak
 
-try:
-    index = 0
-    filename = 'cameralog' + '%04d' % index
-    while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
-        index += 1
+while True:
+    try:
+        index = 0
         filename = 'cameralog' + '%04d' % index
-    with open(current_dir + '/' + filename + '.csv', 'w') as c:
-        csv_writer = csv.writer(c, lineterminator='\n')
-        start_t = time.time()
-        while True:
-            height_BME = BME.readData()
-            print(height_BME)
-            if height_BME[0] >= 40: #meter
-                count_bme += 1
-            else:
-                count_bme = 0
-            if count_bme >= limit_bme:
-                break
-            elif time.time() - start_t >= release_timeout:
-                break
-            time.sleep(0.0007)
+        while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
+            index += 1
+            filename = 'cameralog' + '%04d' % index
+        with open(current_dir + '/' + filename + '.csv', 'w') as c:
+            csv_writer = csv.writer(c, lineterminator='\n')
+            start_t = time.time()
+            while True:
+                row = [timr.time()]
+                height_BME = BME.readData()
+                row.extend(height_BME)
+                print(row)
+                if height_BME[0] >= 40: #meter
+                    count_bme += 1
+                else:
+                    count_bme = 0
+                if count_bme >= limit_bme:
+                    break
+                elif time.time() - start_t >= release_timeout:
+                    break
+                time.sleep(0.0007)
 
-        release_time = time.time()
-        time.sleep(2)
-        while True:
-            height_BME = BME.readData()
-            row = [time.time()]
-            print(height_BME)
-            row.extend(height_BME)
-            if height_BME[0] <= 3: #meter
-                count +=1
-                row.append(count)
-            else:
-                count = 0
-            if count >= limit_bme:
-                row.append("release parachute")
-                break
-            elif time.time() - release_time >= bme_timeout:
-                row.append("timeout")
-                break
-            time.sleep(0.0007)
+            release_time = time.time()
+            time.sleep(2)
+            while True:
+                height_BME = BME.readData()
+                row = [time.time()]
+                row.extend(height_BME)
+                if height_BME[0] <= 3: #meter
+                    count +=1
+                    row.append(count)
+                else:
+                    count = 0
+                    row.append(count)
+
+                print(row)
+
+                if count >= limit_bme:
+                    row.append("release parachute")
+                    print("release parachute")
+                    break
+                elif time.time() - release_time >= bme_timeout:
+                    row.append("timeout")
+                    print("timeout")
+                    break
+                time.sleep(0.0007)
+                csv_writer.writerow(row)
+            pi.hardware_PWM(PWM_pin, 50, duty_release)
+            time.sleep(1)
             csv_writer.writerow(row)
-        pi.hardware_PWM(PWM_pin, 50, duty_release)
-        time.sleep(1)
-        csv_writer.writerow(row)
-finally:
-    pi.hardware_PWM(PWM_pin, 0, 0)
-    for pin in range(0, 2):
-        pi.write(DMUX_pin[pin], 0)
+
+    except OSError:
+        time.sleep(0.05)
+
+    else:
+        break
+
+    finally:
+        pass
+
+pi.hardware_PWM(PWM_pin, 0, 0)
+for pin in range(0, 2):
+    pi.write(DMUX_pin[pin], 0)
+
 
 ## multi_gps_homing
 
@@ -131,7 +149,7 @@ def gps_get():
 def gyro_get():
     global to_goal, rotation, dL, dR, m
     pt = time.time()
-    while 1:
+    while True:
         #dutyLを変える
         gyro = mpu.get_gyro_data_lsb()[2] + drift
         nt = time.time()
@@ -147,42 +165,51 @@ def gyro_get():
         if to_goal[0] < cam_dis:
             break
 
-while 1:
+while True:
     pre = GPS.lat_long_measurement()
     if pre[0] != None:
         break
 print(pre)
-try:
-    index = 0
-    filename = 'gps_hom_log' + '%04d' % index
-    while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
-        index += 1
+
+while True:
+    try:
+        index = 0
         filename = 'gps_hom_log' + '%04d' % index
+        while os.path.isfile(current_dir + '/' + filename + '.csv') == True:
+            index += 1
+            filename = 'gps_hom_log' + '%04d' % index
 
-    DMUX_out = [0,0,0]
-    for pin in range(0, 2):
-        pi.write(DMUX_pin[pin], DMUX_out[pin])
-    pi.set_mode(pinL, pigpio.OUTPUT)
-    pi.set_mode(pinR, pigpio.OUTPUT)
-    to_goal , rotation = [1, 0] , 0
-    t1 = threading.Thread(target = gps_get)
-    t2 = threading.Thread(target = gyro_get)
-    t1.start()
-    t2.start()
+        DMUX_out = [0,0,0]
+        for pin in range(0, 2):
+            pi.write(DMUX_pin[pin], DMUX_out[pin])
+        pi.set_mode(pinL, pigpio.OUTPUT)
+        pi.set_mode(pinR, pigpio.OUTPUT)
+        to_goal , rotation = [1, 0] , 0
+        t1 = threading.Thread(target = gps_get)
+        t2 = threading.Thread(target = gyro_get)
+        t1.start()
+        t2.start()
 
-    with open(current_dir + '/' + filename + '.csv', 'w') as c:
-        csv_writer = csv.writer(c, lineterminator='\n')
-        while True:
-            pi.hardware_PWM(pinL, 50, int(dL))
-            pi.hardware_PWM(pinR, 50, int(dR))
-            if to_goal[0] < cam_dis:
-                pi.hardware_PWM(pinL, 50, 75000)
-                pi.hardware_PWM(pinR, 50, 75000)
-                break
-            csv_writer.writerow([time.time(), m, rotation, to_goal[1] - rotation, to_goal[0]])
-finally:
-    pi.hardware_PWM(pinL, 0, 0)
-    pi.hardware_PWM(pinR, 0, 0)
+        with open(current_dir + '/' + filename + '.csv', 'w') as c:
+            csv_writer = csv.writer(c, lineterminator='\n')
+            while True:
+                pi.hardware_PWM(pinL, 50, int(dL))
+                pi.hardware_PWM(pinR, 50, int(dR))
+                if to_goal[0] < cam_dis:
+                    pi.hardware_PWM(pinL, 50, 75000)
+                    pi.hardware_PWM(pinR, 50, 75000)
+                    break
+                csv_writer.writerow([time.time(), m, rotation, to_goal[1] - rotation, to_goal[0]])
+
+    except:
+        pass
+
+    else:
+        break
+
+    finally:
+        pi.hardware_PWM(pinL, 0, 0)
+        pi.hardware_PWM(pinR, 0, 0)
 
 
 
