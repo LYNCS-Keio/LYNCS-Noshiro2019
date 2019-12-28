@@ -114,17 +114,14 @@ def gps_get():
     while True:
         now = GPS.lat_long_measurement()
         if now[0] != None and now[1] != None:
+            lock.acquire()
             to_goal[0] = GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[0]
-            print(to_goal[0])
-
-            if flag == 0 and GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[0] >= forward_dis:
-                lock.acquire()
-                to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
-                rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1])
-                lock.release()
-                print("count!!!", now)
-                pre = now
-                flag = 1
+            to_goal[1] = -math.degrees(GPS.convert_lat_long_to_r_theta(now[0],now[1],goal_lat,goal_long)[1])
+            print(to_goal)
+            rotation = -math.degrees(GPS.convert_lat_long_to_r_theta(pre[0], pre[1], now[0], now[1])[1])
+            lock.release()
+            print("count!!!", now)
+            pre = now
             if to_goal[0] < cam_dis:
                 break
 
