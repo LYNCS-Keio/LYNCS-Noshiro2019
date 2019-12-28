@@ -13,7 +13,7 @@ import csv
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 #画像誘導に切り替える距離(km)
-cam_dis = 0.005
+cam_dis = 0.1
 forward_dis = 0.01  # 初めの直進距離(km)
 
 pinL = 13
