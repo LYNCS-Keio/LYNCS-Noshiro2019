@@ -108,9 +108,11 @@ try:
         while 1:
             pi.hardware_PWM(pinL, 50, int(dL))
             pi.hardware_PWM(pinR, 50, int(dR))
+
             if to_goal[0] < cam_dis:
                 pi.hardware_PWM(pinL, 50, 75000)
                 pi.hardware_PWM(pinR, 50, 75000)
+                print("yeah")
                 break
             csv_writer.writerow([time.time(), m, rotation, to_goal[1] - rotation])
 
